@@ -1,0 +1,11 @@
+{
+  "name": "rajasthan-tools-software",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix rt-billing-system run dev",
+    "build": "npm --prefix rt-billing-system run build",
+    "start": "npm --prefix rt-billing-system run start",
+    "electron:dev": "npm --prefix rt-billing-system run electron:dev"
+  }
+}
