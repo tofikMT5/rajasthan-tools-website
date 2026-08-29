@@ -12,7 +12,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       const isSessionActive = sessionStorage.getItem('app-session-active');
       if (!isSessionActive) {
         sessionStorage.setItem('app-session-active', 'true');
-        if (window.location.pathname !== '/login') {
+        if (window.location.pathname !== '/login' && window.location.hostname === '127.0.0.1') {
           signOut({ redirect: false }).then(() => {
             window.location.href = window.location.origin + '/login';
           });
