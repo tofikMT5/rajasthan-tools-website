@@ -28,9 +28,11 @@ export function middleware(req: NextRequest) {
     pathname.startsWith('/contact') || 
     pathname.startsWith('/about');
 
-  // Electron App Routing: If the user agent is Electron and hitting the root, redirect to login
-  const userAgent = req.headers.get('user-agent') || '';
-  if (userAgent.toLowerCase().includes('electron') && pathname === '/') {
+  const hostname = req.headers.get('host') || '';
+  const isWebsiteDomain = hostname.includes('rajasthan-tools-website') || process.env.NEXT_PUBLIC_APP_MODE === 'website';
+  
+  // Software Domain (Desktop / rt-billing-system): Redirect root to login
+  if (!isWebsiteDomain && pathname === '/') {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
@@ -45,7 +47,7 @@ export function middleware(req: NextRequest) {
     pathname.startsWith('/reports') ||
     pathname === '/login';
 
-  if (process.env.VERCEL === '1' && isDashboardRoute) {
+  if (isWebsiteDomain && isDashboardRoute) {
     return new NextResponse("Not Found", { status: 404 });
   }
 
