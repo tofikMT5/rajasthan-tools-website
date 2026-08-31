@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
+import { logoutAction } from '@/app/actions/auth';
 import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -132,7 +133,9 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
 
           <button
             onClick={() => {
-              signOut({ callbackUrl: '/login' });
+              // Clear session storage just in case so fresh launch logic works next time
+              sessionStorage.removeItem('app-session-active');
+              logoutAction();
             }}
             title="Logout"
             className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors shrink-0"

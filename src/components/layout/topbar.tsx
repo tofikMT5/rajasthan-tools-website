@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
+import { logoutAction } from '@/app/actions/auth';
 import { useI18n } from '@/lib/i18n/i18n-context';
 import { Search, Bell, Globe, Sun, Moon, User, LogOut, Package, ShieldAlert, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -123,7 +124,8 @@ export function Topbar({ onOpenSearch }: TopbarProps) {
               </div>
               <button
                 onClick={() => {
-                  signOut({ callbackUrl: '/login' });
+                  sessionStorage.removeItem('app-session-active');
+                  logoutAction();
                 }}
                 className="w-full text-left px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-2 font-medium"
               >
