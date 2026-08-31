@@ -131,9 +131,8 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
           </div>
 
           <button
-            onClick={async () => {
-              await signOut({ redirect: false });
-              window.location.href = window.location.origin + '/login';
+            onClick={() => {
+              signOut({ callbackUrl: '/login' });
             }}
             title="Logout"
             className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors shrink-0"
