@@ -31,11 +31,11 @@ export default function ProductsPage() {
   const [nameAr, setNameAr] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [unit, setUnit] = useState('PCS');
-  const [costPrice, setCostPrice] = useState(0);
-  const [salePrice, setSalePrice] = useState(0);
-  const [wholesalePrice, setWholesalePrice] = useState(0);
-  const [stockQty, setStockQty] = useState(0);
-  const [minStockAlert, setMinStockAlert] = useState(5);
+  const [costPrice, setCostPrice] = useState<string | number>('');
+  const [salePrice, setSalePrice] = useState<string | number>('');
+  const [wholesalePrice, setWholesalePrice] = useState<string | number>('');
+  const [stockQty, setStockQty] = useState<string | number>('');
+  const [minStockAlert, setMinStockAlert] = useState<string | number>(5);
   const [origin, setOrigin] = useState('');
   const [imageBase64, setImageBase64] = useState<string>('');
   const [isTranslating, setIsTranslating] = useState(false);
@@ -166,9 +166,9 @@ export default function ProductsPage() {
         setBarcode('');
         setNameEn('');
         setNameAr('');
-        setCostPrice(0);
-        setSalePrice(0);
-        setStockQty(0);
+        setCostPrice('');
+        setSalePrice('');
+        setStockQty('');
         setImageBase64('');
         fetchProducts();
       } else {
@@ -423,26 +423,26 @@ export default function ProductsPage() {
                   <div className="grid grid-cols-3 gap-3">
                     <div>
                       <label className="text-xs font-semibold text-slate-700">Cost Price (KD) *</label>
-                      <Input type="number" step="0.001" value={costPrice} onChange={(e) => setCostPrice(Number(e.target.value))} required className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300" />
+                      <Input type="number" step="0.001" value={costPrice} onChange={(e) => setCostPrice(e.target.value)} required className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300" />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-slate-700">Sale Price (KD) *</label>
-                      <Input type="number" step="0.001" value={salePrice} onChange={(e) => setSalePrice(Number(e.target.value))} required className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300" />
+                      <Input type="number" step="0.001" value={salePrice} onChange={(e) => setSalePrice(e.target.value)} required className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300" />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-slate-700">Wholesale Price (KD)</label>
-                      <Input type="number" step="0.001" value={wholesalePrice} onChange={(e) => setWholesalePrice(Number(e.target.value))} className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300" />
+                      <Input type="number" step="0.001" value={wholesalePrice} onChange={(e) => setWholesalePrice(e.target.value)} className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs font-semibold text-slate-700">Opening Stock Qty</label>
-                      <Input type="number" value={stockQty} onChange={(e) => setStockQty(Number(e.target.value))} className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300" />
+                      <Input type="number" value={stockQty} onChange={(e) => setStockQty(e.target.value)} className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300" />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-slate-700">Min Stock Alert Level</label>
-                      <Input type="number" value={minStockAlert} onChange={(e) => setMinStockAlert(Number(e.target.value))} className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300" />
+                      <Input type="number" value={minStockAlert} onChange={(e) => setMinStockAlert(e.target.value)} className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300" />
                     </div>
                   </div>
                 </div>

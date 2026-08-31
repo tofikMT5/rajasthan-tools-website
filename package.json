@@ -28,9 +28,10 @@
     },
     "files": [
       "electron/**/*",
-      "package.json"
+      "package.json",
+      "!node_modules"
     ],
-    "asar": false,
+    "asar": true,
     "asarUnpack": [],
     "win": {
       "forceCodeSigning": false,

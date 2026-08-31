@@ -15,15 +15,12 @@
 - Hosting target: local desktop + future website connected to same DB
 
 ## Current Status (as of today)
-- Web app exists with dashboard modules:
-  Dashboard, POS/New Invoice, Invoices, Products, Categories, Customers, Suppliers, Purchases, Reports, Users, Settings
+- Web app exists with dashboard modules: Dashboard, POS, Invoices, Products, etc.
 - Purchases module was fixed from 404
 - Login/runtime errors fixed
-- Electron desktop build generated in dist-installer/win-unpacked and dist-final2 (to bypass locks)
-- Electron UI styling & host binding fixed (127.0.0.1:3000)
-- NextAuth session redirects forcefully route to correct origin (Vercel/Local) instead of localhost
-- Enforced session login requirement upon every new Electron app launch via sessionStorage
+- NextAuth session redirects forcefully route to correct origin
 - Website module is live and connected. Product edit/image upload synced to Live Vercel.
+- **Electron desktop `.exe` installer is successfully building!** Fixed the Windows path limit/crash issue by enabling `asar: true` and excluding `node_modules`. Fixed `winCodeSign` symlink errors by running build commands in Administrator mode. The final `.exe` is generated in `dist-final2/`.
 
 ## Important Paths
 - Project path: `E:\Downloads chrome\Antigravity Project\Rajasthan Tools Software\rt-billing-system`
@@ -69,6 +66,7 @@
 - Electron Builder packaging failure due to EBUSY locks and files array overriding (fixed by outputting to dist-final2)
 - NextAuth logout redirecting to localhost on Vercel and persisting sessions in Electron (fixed by dynamic origin tracking and sessionStorage session enforcer)
 - Next.js 15 Vercel build failures due to `params` and `searchParams` types not being Promises (fixed by converting them to Promises and awaiting them, validated via `npx tsc --noEmit` before push).
+- **Public Website (`/`) redirecting to `/login` and throwing 404 on Vercel:** Fixed by restricting the `sessionStorage` aggressive logout logic in `providers.tsx` to only run when `window.location.hostname === '127.0.0.1'` (Electron environment).
 
 ## Client Live Change Requests (Direct Workflow)
 **Trigger Phrase:** "PRODUCT ME CHANGES KIYE THE WESA HI STEP BA MUJEH ISME BHI CHAGES KRWNA HAI"

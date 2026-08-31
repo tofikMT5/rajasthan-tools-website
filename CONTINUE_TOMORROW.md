@@ -12,11 +12,9 @@
    - or run `dist-installer/win-unpacked/RT Billing System.exe`
 
 ## Tomorrow first tasks (in order)
-1. Confirm web UI is fully styled and working
-2. Confirm Electron UI matches web UI (styled)
-3. If Electron UI broken: fix asset/CSS loading only
-4. Build clean client installer .exe
-5. Then start WEBSITE phase (connected to same DB):
+0. ✅ Fixed the Electron packaging issues (Windows path limit, lock files, symlink errors). The clean `.exe` is ready in `dist-final2/`.
+1. **Send the `RT-Billing-Setup-1.0.0.exe` to the client and ensure they can install/open it.**
+2. Then start WEBSITE phase (connected to same DB):
    - Home, Products, Categories, About, Contact
    - EN/AR toggle + RTL
    - show products where `showOnWebsite = true`

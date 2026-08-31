@@ -87,6 +87,19 @@ export default function PosPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showHeldModal, setShowHeldModal] = useState(false);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
+  
+  const [discountStr, setDiscountStr] = useState('');
+  const [extraStr, setExtraStr] = useState('');
+
+  useEffect(() => {
+    if (discountAmount === 0) setDiscountStr('');
+    else if (parseFloat(discountStr) !== discountAmount) setDiscountStr(discountAmount.toString());
+  }, [discountAmount]);
+
+  useEffect(() => {
+    if (extraAmount === 0) setExtraStr('');
+    else if (parseFloat(extraStr) !== extraAmount) setExtraStr(extraAmount.toString());
+  }, [extraAmount]);
 
   // Load products & categories
   useEffect(() => {
@@ -427,11 +440,30 @@ export default function PosPage() {
 
                   {/* Quantity Modifier Buttons */}
                   <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
-                    <button onClick={() => updateQty(item.productId, -1)} className="p-1 hover:text-white text-slate-400">
+                    <button onClick={() => updateQty(item.productId, -1)} className="p-1 hover:text-white text-slate-400 shrink-0">
                       <Minus className="w-3 h-3" />
                     </button>
-                    <span className="w-6 text-center font-mono font-bold text-xs text-white">{item.qty}</span>
-                    <button onClick={() => updateQty(item.productId, 1)} className="p-1 hover:text-white text-slate-400">
+                    <input
+                      type="number"
+                      min="1"
+                      value={item.qty === 0 ? '' : item.qty}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value);
+                        if (!isNaN(val) && val > 0) {
+                          setQty(item.productId, val);
+                        } else if (e.target.value === '') {
+                          // Allow clearing the input temporarily while typing
+                          setQty(item.productId, 0 as any); 
+                        }
+                      }}
+                      onBlur={(e) => {
+                        if (!e.target.value || parseInt(e.target.value) < 1) {
+                          setQty(item.productId, 1);
+                        }
+                      }}
+                      className="w-10 h-5 text-center font-mono font-bold text-xs text-white bg-slate-950 border border-slate-800 rounded outline-none focus:border-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                    <button onClick={() => updateQty(item.productId, 1)} className="p-1 hover:text-white text-slate-400 shrink-0">
                       <Plus className="w-3 h-3" />
                     </button>
                   </div>
@@ -458,8 +490,11 @@ export default function PosPage() {
                 <Input
                   type="number"
                   step="0.001"
-                  value={discountAmount}
-                  onChange={(e) => setDiscountAmount(Number(e.target.value))}
+                  value={discountStr}
+                  onChange={(e) => {
+                    setDiscountStr(e.target.value);
+                    setDiscountAmount(parseFloat(e.target.value) || 0);
+                  }}
                   className="h-8 bg-slate-900 border-slate-800 text-white font-mono text-xs mt-0.5"
                 />
               </div>
@@ -468,8 +503,11 @@ export default function PosPage() {
                 <Input
                   type="number"
                   step="0.001"
-                  value={extraAmount}
-                  onChange={(e) => setExtraAmount(Number(e.target.value))}
+                  value={extraStr}
+                  onChange={(e) => {
+                    setExtraStr(e.target.value);
+                    setExtraAmount(parseFloat(e.target.value) || 0);
+                  }}
                   className="h-8 bg-slate-900 border-slate-800 text-white font-mono text-xs mt-0.5"
                 />
               </div>
