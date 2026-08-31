@@ -31,7 +31,12 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  createWindow();
+  const { session } = require('electron');
+  // Clear all persistent session data (cookies, localStorage) before opening the app
+  // This forces the user to see the Login Screen every time the software is opened.
+  session.defaultSession.clearStorageData().then(() => {
+    createWindow();
+  });
 
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
