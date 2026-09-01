@@ -67,6 +67,10 @@
 - NextAuth logout redirecting to localhost on Vercel and persisting sessions in Electron (fixed by dynamic origin tracking and sessionStorage session enforcer)
 - Next.js 15 Vercel build failures due to `params` and `searchParams` types not being Promises (fixed by converting them to Promises and awaiting them, validated via `npx tsc --noEmit` before push).
 - **Public Website (`/`) redirecting to `/login` and throwing 404 on Vercel:** Fixed by restricting the `sessionStorage` aggressive logout logic in `providers.tsx` to only run when `window.location.hostname === '127.0.0.1'` (Electron environment).
+- **Vercel Domains Routing Conflict:** Both software and website deployed from the same repo. Fixed by updating `middleware.ts` to check `hostname.includes('rajasthan-tools-website')` and route traffic appropriately (root goes to `/login` for software, but serves public page for website).
+- **Numeric Inputs Sticky Zeros & Decimals:** Fixed by changing React state from `0` to empty string `''` and supporting `string | number` types in inputs.
+- **Electron Auto-Login Issue:** Fixed by running `session.defaultSession.clearStorageData()` in `electron/main.js` on startup to force a fresh login screen every time the `.exe` is opened.
+- **Vercel Logout Caching Bug:** Fixed by migrating `signOut` client call to a Next.js **Server Action** (`logoutAction`), completely destroying the session securely on the server and forcing a 303 redirect, bypassing client-side router caching.
 
 ## Client Live Change Requests (Direct Workflow)
 **Trigger Phrase:** "PRODUCT ME CHANGES KIYE THE WESA HI STEP BA MUJEH ISME BHI CHAGES KRWNA HAI"

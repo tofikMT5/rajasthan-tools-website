@@ -13,11 +13,10 @@
 
 ## Tomorrow first tasks (in order)
 0. ✅ Fixed the Electron packaging issues (Windows path limit, lock files, symlink errors). The clean `.exe` is ready in `dist-final2/`.
-1. **Send the `RT-Billing-Setup-1.0.0.exe` to the client and ensure they can install/open it.**
-2. Then start WEBSITE phase (connected to same DB):
-   - Home, Products, Categories, About, Contact
-   - EN/AR toggle + RTL
-   - show products where `showOnWebsite = true`
+1. ✅ **Website Phase Completed:** The Website is successfully deployed to `rajasthan-tools-website-five.vercel.app` alongside the Software Dashboard (`rt-billing-system.vercel.app`) from a unified codebase! Vercel routing conflicts have been resolved via middleware.
+2. ✅ **Auto-Login and Logout caching fixed:** Fixed persistent Electron sessions and NextAuth App Router logout caching issues.
+3. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
+4. **Client Request Backlog:** Proceed with the "bahut se changes" (many more changes) the client mentioned they want to do next. Ensure all future changes are strictly tested so the Website and Software routing remains perfectly isolated.
 
 ## Do NOT do tomorrow unless asked
 - Full rewrite
