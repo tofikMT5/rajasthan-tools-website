@@ -37,6 +37,40 @@ export default function ProductDetailPage() {
   const [editOrigin, setEditOrigin] = useState('');
   const [imageBase64, setImageBase64] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const isInitialMount = React.useRef(true);
+  const prevNameEn = React.useRef(editNameEn);
+
+  // Auto-translate nameEn to nameAr
+  useEffect(() => {
+    // Prevent translating on initial open when editNameEn is just populated from DB
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      prevNameEn.current = editNameEn;
+      return;
+    }
+    
+    // Only translate if the name actually changed (user is typing)
+    if (editNameEn === prevNameEn.current) return;
+    prevNameEn.current = editNameEn;
+
+    if (!editNameEn || editNameEn.trim() === '') return;
+    const timer = setTimeout(async () => {
+      try {
+        setIsTranslating(true);
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(editNameEn)}&langpair=en|ar`);
+        const data = await res.json();
+        if (data && data.responseData && data.responseData.translatedText) {
+          setEditNameAr(data.responseData.translatedText);
+        }
+      } catch (error) {
+        console.error('Translation error:', error);
+      } finally {
+        setIsTranslating(false);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [editNameEn]);
 
   useEffect(() => {
     fetch('/api/categories').then(res => res.json()).then(data => {
@@ -59,6 +93,7 @@ export default function ProductDetailPage() {
     setEditMinStockAlert(product.minStockAlert || 5);
     setEditOrigin(product.origin || '');
     setImageBase64(product.images?.[0] || '');
+    isInitialMount.current = true; // reset so we don't translate the DB value
     setIsEditModalOpen(true);
   };
 
