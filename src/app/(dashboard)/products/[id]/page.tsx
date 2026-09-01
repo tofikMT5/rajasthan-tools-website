@@ -289,21 +289,21 @@ export default function ProductDetailPage() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs font-semibold text-slate-700 block mb-1">Item Code / SKU *</label>
-                      <Input value={editItemCode} onChange={e => setEditItemCode(e.target.value)} required />
+                      <Input className="text-black dark:text-white" value={editItemCode} onChange={e => setEditItemCode(e.target.value)} required />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-slate-700 block mb-1">Barcode</label>
-                      <Input value={editBarcode} onChange={e => setEditBarcode(e.target.value)} />
+                      <Input className="text-black dark:text-white" value={editBarcode} onChange={e => setEditBarcode(e.target.value)} />
                     </div>
                   </div>
 
                   <div>
                     <label className="text-xs font-semibold text-slate-700 block mb-1">English Name *</label>
-                    <Input value={editNameEn} onChange={e => setEditNameEn(e.target.value)} required />
+                    <Input className="text-black dark:text-white" value={editNameEn} onChange={e => setEditNameEn(e.target.value)} required />
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-slate-700 block mb-1">Arabic Name *</label>
-                    <Input value={editNameAr} onChange={e => setEditNameAr(e.target.value)} required dir="rtl" className="font-arabic" />
+                    <Input className="text-black dark:text-white font-arabic" value={editNameAr} onChange={e => setEditNameAr(e.target.value)} required dir="rtl" />
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3">
@@ -343,26 +343,26 @@ export default function ProductDetailPage() {
                   <div className="grid grid-cols-3 gap-3">
                     <div>
                       <label className="text-xs font-semibold text-slate-700 block mb-1">Cost Price (KD) *</label>
-                      <Input type="number" step="0.001" value={editCostPrice} onChange={e => setEditCostPrice(e.target.value)} required />
+                      <Input className="text-black dark:text-white" type="number" step="0.001" value={editCostPrice} onChange={e => setEditCostPrice(e.target.value)} required />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-slate-700 block mb-1">Sale Price (KD) *</label>
-                      <Input type="number" step="0.001" value={editSalePrice} onChange={e => setEditSalePrice(e.target.value)} required />
+                      <Input className="text-black dark:text-white" type="number" step="0.001" value={editSalePrice} onChange={e => setEditSalePrice(e.target.value)} required />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-slate-700 block mb-1">Wholesale Price (KD)</label>
-                      <Input type="number" step="0.001" value={editWholesalePrice} onChange={e => setEditWholesalePrice(e.target.value)} />
+                      <Input className="text-black dark:text-white" type="number" step="0.001" value={editWholesalePrice} onChange={e => setEditWholesalePrice(e.target.value)} />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs font-semibold text-slate-700 block mb-1">Stock Qty</label>
-                      <Input type="number" value={editStockQty} onChange={e => setEditStockQty(e.target.value)} />
+                      <Input className="text-black dark:text-white" type="number" value={editStockQty} onChange={e => setEditStockQty(e.target.value)} />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-slate-700 block mb-1">Min Stock Alert Level</label>
-                      <Input type="number" value={editMinStockAlert} onChange={e => setEditMinStockAlert(e.target.value)} />
+                      <Input className="text-black dark:text-white" type="number" value={editMinStockAlert} onChange={e => setEditMinStockAlert(e.target.value)} />
                     </div>
                   </div>
                 </div>
@@ -373,7 +373,7 @@ export default function ProductDetailPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="text-xs font-semibold text-slate-700 block mb-1">Country of Origin</label>
-                    <Input value={editOrigin} onChange={e => setEditOrigin(e.target.value)} placeholder="e.g. Japan, Germany, Taiwan" />
+                    <Input className="text-black dark:text-white" value={editOrigin} onChange={e => setEditOrigin(e.target.value)} placeholder="e.g. Japan, Germany, Taiwan" />
                   </div>
                   
                   <div className="pt-4 border-t border-slate-100">
@@ -389,7 +389,7 @@ export default function ProductDetailPage() {
               )}
 
               <div className="flex justify-between items-center pt-4 border-t border-slate-200 mt-4">
-                <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+                <Button type="button" variant="outline" className="text-black dark:text-white" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
                 <Button type="submit" disabled={isSaving} className="bg-blue-600 text-white hover:bg-blue-700">Save Changes</Button>
               </div>
             </form>
