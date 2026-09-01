@@ -1,0 +1,5 @@
+node_modules
+.next
+dist-final2
+dist-installer
+.git

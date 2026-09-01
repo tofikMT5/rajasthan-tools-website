@@ -48,3 +48,4 @@ next-env.d.ts
 /dist-final2
 .env.local
 .env
+.vercel
