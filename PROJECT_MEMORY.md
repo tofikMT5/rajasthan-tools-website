@@ -21,6 +21,7 @@
 - NextAuth session redirects forcefully route to correct origin
 - Website module is live and connected. Product edit/image upload synced to Live Vercel.
 - **Electron desktop `.exe` installer is successfully building!** Fixed the Windows path limit/crash issue by enabling `asar: true` and excluding `node_modules`. Fixed `winCodeSign` symlink errors by running build commands in Administrator mode. The final `.exe` is generated in `dist-final2/`.
+- **Wiped all test data (invoices, bills, purchases, etc.) to 0 for production handover. Software is now with the shop for real data entry.**
 
 ## Important Paths
 - Project path: `E:\Downloads chrome\Antigravity Project\Rajasthan Tools Software\rt-billing-system`
