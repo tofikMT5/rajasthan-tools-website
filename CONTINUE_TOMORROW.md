@@ -13,10 +13,12 @@
 
 ## Tomorrow first tasks (in order)
 0. ✅ Fixed the Electron packaging issues (Windows path limit, lock files, symlink errors). The clean `.exe` is ready in `dist-final2/`.
-1. ✅ **Website Phase Completed:** The Website is successfully deployed to `rajasthan-tools-website-five.vercel.app` alongside the Software Dashboard (`rt-billing-system.vercel.app`) from a unified codebase! Vercel routing conflicts have been resolved via middleware.
-2. ✅ **Auto-Login and Logout caching fixed:** Fixed persistent Electron sessions and NextAuth App Router logout caching issues.
-3. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
-4. **Client Request Backlog:** Proceed with the "bahut se changes" (many more changes) the client mentioned they want to do next. Ensure all future changes are strictly tested so the Website and Software routing remains perfectly isolated.
+1. ✅ **Website Phase Completed:** The Website is successfully deployed. Vercel routing conflicts have been resolved via middleware.
+2. ✅ **Auto-Login and Logout caching fixed.**
+3. ✅ **Vercel UI Cache Bug Fixed:** Fixed the input field visibility bug where the Vercel-deployed app was caching CSS classes, causing input texts to appear light gray. We hardcoded `text-black` to bypass it.
+4. ✅ **Edit Product Translation Fix:** Added English to Arabic auto-translate functionality directly to the Edit Product modal (`products/[id]/page.tsx`), similar to the Add Product modal, with smart handling to avoid overwriting existing names on load.
+5. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
+6. **Client Request Backlog:** Proceed with the next changes the client requested.
 
 ## Do NOT do tomorrow unless asked
 - Full rewrite

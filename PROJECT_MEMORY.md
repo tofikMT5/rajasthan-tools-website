@@ -71,7 +71,8 @@
 - **Numeric Inputs Sticky Zeros & Decimals:** Fixed by changing React state from `0` to empty string `''` and supporting `string | number` types in inputs.
 - **Electron Auto-Login Issue:** Fixed by running `session.defaultSession.clearStorageData()` in `electron/main.js` on startup to force a fresh login screen every time the `.exe` is opened.
 - **Vercel Logout Caching Bug:** Fixed by migrating `signOut` client call to a Next.js **Server Action** (`logoutAction`), completely destroying the session securely on the server and forcing a 303 redirect, bypassing client-side router caching.
-
+- **Vercel Input Text Visibility CSS Caching Bug:** Fixed by bypassing Tailwind CSS chunk caching entirely, adding explicit `className="text-black dark:text-white"` directly to all `Input` tags in `page.tsx` and deploying via Vercel CLI.
+- **Edit Product English to Arabic Auto-Translation:** Copied translation `useEffect` hook from Add Product modal to Edit Product modal, adding a `useRef` to prevent overwriting the existing Arabic name on initial modal open.
 ## Client Live Change Requests (Direct Workflow)
 **Trigger Phrase:** "PRODUCT ME CHANGES KIYE THE WESA HI STEP BA MUJEH ISME BHI CHAGES KRWNA HAI"
 **Action Plan when triggered:**

@@ -177,18 +177,18 @@ model Invoice {
 }
 
 model InvoiceItem {
-  id           String   @id @default(cuid())
+  id           String  @id @default(cuid())
   invoiceId    String
-  invoice      Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  invoice      Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   productId    String
-  product      Product  @relation(fields: [productId], references: [id])
+  product      Product @relation(fields: [productId], references: [id])
   itemCodeSnap String
   nameEnSnap   String
   nameArSnap   String
   qty          Int
-  price        Decimal  @db.Decimal(12, 3)
-  lineDiscount Decimal  @default(0) @db.Decimal(12, 3)
-  amount       Decimal  @db.Decimal(12, 3)
+  price        Decimal @db.Decimal(12, 3)
+  lineDiscount Decimal @default(0) @db.Decimal(12, 3)
+  amount       Decimal @db.Decimal(12, 3)
 }
 
 model Payment {
@@ -268,24 +268,24 @@ model ActivityLog {
 }
 
 model FeatureToggles {
-  id                  String   @id @default("main")
+  id               String  @id @default("main")
   // Sidebar Modules
-  enablePos           Boolean  @default(true)
-  enableInvoices      Boolean  @default(true)
-  enableProducts      Boolean  @default(true)
-  enableCategories    Boolean  @default(true)
-  enableCustomers     Boolean  @default(true)
-  enableSuppliers     Boolean  @default(true)
-  enablePurchases     Boolean  @default(true)
-  enableReports       Boolean  @default(true)
-  enableUsers         Boolean  @default(true)
-  enableSettings      Boolean  @default(true)
-  
+  enablePos        Boolean @default(true)
+  enableInvoices   Boolean @default(true)
+  enableProducts   Boolean @default(true)
+  enableCategories Boolean @default(true)
+  enableCustomers  Boolean @default(true)
+  enableSuppliers  Boolean @default(true)
+  enablePurchases  Boolean @default(true)
+  enableReports    Boolean @default(true)
+  enableUsers      Boolean @default(true)
+  enableSettings   Boolean @default(true)
+
   // Sub-Features
-  enableQuotations    Boolean  @default(true)
-  enableProfitReport Boolean  @default(true)
-  enablePdfExport     Boolean  @default(true)
-  enableWhatsapp      Boolean  @default(true)
-  
-  updatedAt           DateTime @updatedAt
+  enableQuotations   Boolean @default(true)
+  enableProfitReport Boolean @default(true)
+  enablePdfExport    Boolean @default(true)
+  enableWhatsapp     Boolean @default(true)
+
+  updatedAt DateTime @updatedAt
 }
