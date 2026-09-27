@@ -138,7 +138,7 @@ export const usePosStore = create<PosState>((set, get) => ({
 
   setQty: (productId, qty) => {
     const { cart } = get();
-    if (qty <= 0) {
+    if (qty < 0) {
       get().removeFromCart(productId);
       return;
     }

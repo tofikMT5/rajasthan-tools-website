@@ -170,7 +170,7 @@ export default function NewPurchasePage() {
           <ArrowLeft className="w-4 h-4" /> Back to Purchases
         </Button>
         <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <ShoppingBag className="w-5 h-5 text-orange-500" /> New Stock Intake Purchase Order
+          <ShoppingBag className="w-5 h-5 text-orange-500" /> New Purchase Invoice
         </h1>
       </div>
 
