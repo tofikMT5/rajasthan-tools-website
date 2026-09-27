@@ -104,7 +104,7 @@ export default function PurchasesPage() {
         </div>
         <Link href="/purchases/new">
           <Button className="bg-orange-500 hover:bg-orange-600 text-white font-bold gap-2">
-            <Plus className="w-4 h-4" /> New Purchase Order
+            <Plus className="w-4 h-4" /> New Purchase Invoice
           </Button>
         </Link>
       </div>
