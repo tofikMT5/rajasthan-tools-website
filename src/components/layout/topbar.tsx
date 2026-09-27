@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { logoutAction } from '@/app/actions/auth';
 import { useI18n } from '@/lib/i18n/i18n-context';
+import { useSearchStore } from '@/stores/search-store';
 import { Search, Bell, Globe, Sun, Moon, User, LogOut, Package, ShieldAlert, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,7 @@ export function Topbar({ onOpenSearch }: TopbarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const { lang, toggleLanguage } = useI18n();
+  const { globalSearch, setGlobalSearch } = useSearchStore();
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -35,14 +37,16 @@ export function Topbar({ onOpenSearch }: TopbarProps) {
       </div>
 
       {/* Center: Global Search Bar */}
-      <div className="hidden md:flex items-center w-72 lg:w-96">
-        <div
-          onClick={onOpenSearch}
-          className="w-full flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 cursor-pointer text-xs font-medium transition-all"
-        >
-          <Search className="w-4 h-4 text-slate-400" />
-          <span>Search products, invoices...</span>
-          <kbd className="ml-auto px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono text-slate-600 dark:text-slate-300">
+      <div className="hidden md:flex items-center w-72 lg:w-96 relative">
+        <Search className="w-4 h-4 text-slate-400 absolute left-3" />
+        <Input
+          value={globalSearch}
+          onChange={(e) => setGlobalSearch(e.target.value)}
+          placeholder="Search products, invoices..."
+          className="w-full pl-9 h-9 bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-200 focus-visible:ring-1 focus-visible:ring-orange-500 rounded-xl"
+        />
+        <div className="absolute right-3 hidden lg:block">
+          <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono text-slate-600 dark:text-slate-300">
             ⌘K
           </kbd>
         </div>

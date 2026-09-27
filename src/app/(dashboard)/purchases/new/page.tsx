@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatKWD, formatKWDNum } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useSearchStore } from '@/stores/search-store';
 
 export default function NewPurchasePage() {
   const router = useRouter();
@@ -27,6 +28,8 @@ export default function NewPurchasePage() {
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [newSupplierName, setNewSupplierName] = useState('');
   const [newSupplierPhone, setNewSupplierPhone] = useState('');
+
+  const { globalSearch } = useSearchStore();
 
   useEffect(() => {
     async function loadData() {
@@ -225,7 +228,18 @@ export default function NewPurchasePage() {
             <CardContent className="p-4 space-y-3">
               <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500">Select Products for Intake</h3>
               <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
-                {products.map((p) => (
+                {products
+                  .filter((p) => {
+                    if (!globalSearch) return true;
+                    const s = globalSearch.toLowerCase();
+                    return (
+                      p.nameEn.toLowerCase().includes(s) ||
+                      p.nameAr.includes(s) ||
+                      p.itemCode.toLowerCase().includes(s) ||
+                      (p.barcode && p.barcode.includes(s))
+                    );
+                  })
+                  .map((p) => (
                   <div
                     key={p.id}
                     onClick={() => handleAddItemRow(p)}

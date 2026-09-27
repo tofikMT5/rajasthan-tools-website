@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useSearchStore } from '@/stores/search-store';
 import { formatKWD, formatKWDNum } from '@/lib/utils';
 import { PAYMENT_MODES, INVOICE_TYPES } from '@/lib/constants';
 import { toast } from 'sonner';
@@ -82,7 +83,10 @@ export default function PosPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [localSearch, setLocalSearch] = useState('');
+  const { globalSearch } = useSearchStore();
+  const searchQuery = localSearch || globalSearch;
+  
   const [barcodeInput, setBarcodeInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showHeldModal, setShowHeldModal] = useState(false);
@@ -344,8 +348,8 @@ export default function PosPage() {
               <Search className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
               <Input
                 ref={searchInputRef}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
                 placeholder="Search name, SKU, code..."
                 className="pl-9 bg-slate-900 border-slate-800 text-white text-xs h-10 focus-visible:ring-blue-500"
               />

@@ -9,12 +9,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatKWD, formatDate } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useSearchStore } from '@/stores/search-store';
 import { FeatureLockOverlay } from '@/components/shared/FeatureLockOverlay';
 
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [localSearch, setLocalSearch] = useState('');
+  const { globalSearch } = useSearchStore();
+  const search = localSearch || globalSearch;
+  
   const [toggles, setToggles] = useState<any>(null);
 
   useEffect(() => {
@@ -76,8 +80,8 @@ export default function InvoicesPage() {
         <div className="relative flex-1">
           <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
           <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
             placeholder="Search by Bill No (e.g. 1005) or Customer name..."
             className="pl-10 h-10"
           />

@@ -9,13 +9,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatKWD, formatDate } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useSearchStore } from '@/stores/search-store';
 import { FeatureLockOverlay } from '@/components/shared/FeatureLockOverlay';
 
 export default function PurchasesPage() {
   const [purchases, setPurchases] = useState<any[]>([]);
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [localSearch, setLocalSearch] = useState('');
+  const { globalSearch } = useSearchStore();
+  const search = localSearch || globalSearch;
+  
   const [selectedSupplier, setSelectedSupplier] = useState('');
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [toggles, setToggles] = useState<any>(null);
@@ -138,8 +142,8 @@ export default function PurchasesPage() {
         <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
           <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
             placeholder="Search by Purchase No or Supplier..."
             className="pl-10 h-10"
           />
