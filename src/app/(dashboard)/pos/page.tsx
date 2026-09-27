@@ -18,6 +18,8 @@ import {
   HelpCircle,
   ChevronDown,
   X,
+  Edit2,
+  Check,
 } from 'lucide-react';
 import { usePosStore } from '@/stores/pos-store';
 import { Button } from '@/components/ui/button';
@@ -91,6 +93,9 @@ export default function PosPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showHeldModal, setShowHeldModal] = useState(false);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
+  
+  const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
+  const [editingPriceValue, setEditingPriceValue] = useState<string>('');
   
   const [discountStr, setDiscountStr] = useState('');
   const [extraStr, setExtraStr] = useState('');
@@ -442,9 +447,57 @@ export default function PosPage() {
                     </p>
                   </div>
 
-                  {/* Quantity Modifier Buttons */}
-                  <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
-                    <button onClick={() => updateQty(item.productId, -1)} className="p-1 hover:text-white text-slate-400 shrink-0">
+                  {/* Edit Price & Quantity Modifier Buttons */}
+                  <div className="flex items-center gap-2">
+                    {editingPriceId === item.productId ? (
+                      <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-blue-500">
+                        <input
+                          type="number"
+                          step="0.001"
+                          autoFocus
+                          value={editingPriceValue}
+                          onChange={(e) => setEditingPriceValue(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              const newPrice = parseFloat(editingPriceValue);
+                              if (!isNaN(newPrice) && newPrice >= 0) {
+                                updatePrice(item.productId, newPrice);
+                              }
+                              setEditingPriceId(null);
+                            } else if (e.key === 'Escape') {
+                              setEditingPriceId(null);
+                            }
+                          }}
+                          className="w-16 h-5 text-center font-mono font-bold text-xs text-white bg-transparent outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <button
+                          onClick={() => {
+                            const newPrice = parseFloat(editingPriceValue);
+                            if (!isNaN(newPrice) && newPrice >= 0) {
+                              updatePrice(item.productId, newPrice);
+                            }
+                            setEditingPriceId(null);
+                          }}
+                          className="p-1 hover:text-emerald-400 text-slate-400 shrink-0"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setEditingPriceId(item.productId);
+                          setEditingPriceValue(item.price.toString());
+                        }}
+                        className="p-1.5 rounded-lg border border-slate-800 bg-slate-900 text-slate-400 hover:text-white hover:border-slate-700 transition-colors"
+                        title="Edit Price"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+
+                    <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+                      <button onClick={() => updateQty(item.productId, -1)} className="p-1 hover:text-white text-slate-400 shrink-0">
                       <Minus className="w-3 h-3" />
                     </button>
                     <input
@@ -471,6 +524,7 @@ export default function PosPage() {
                       <Plus className="w-3 h-3" />
                     </button>
                   </div>
+                </div>
 
                   {/* Line Total Amount */}
                   <div className="text-right min-w-[70px]">
