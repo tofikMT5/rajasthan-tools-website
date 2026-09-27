@@ -27,7 +27,7 @@ export default function LoginPage() {
         setError('Invalid username or password');
         setLoading(false);
       } else {
-        router.push('/dashboard');
+        router.push('/pos');
         router.refresh();
       }
     } catch (err: any) {
@@ -87,7 +87,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 transition disabled:opacity-50 text-sm"
           >
-            {loading ? 'Signing in...' : 'Sign In to Dashboard'}
+            {loading ? 'Signing in...' : 'Sign In to POS'}
           </button>
         </form>
 

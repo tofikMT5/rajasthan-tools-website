@@ -125,7 +125,7 @@ export default function PosPage() {
   }, []);
 
   // Filter products by category & search query
-  const filteredProducts = products.filter((p) => {
+  const filteredProducts = (!searchQuery && !selectedCategory) ? [] : products.filter((p) => {
     const matchesCategory = !selectedCategory || p.categoryId === selectedCategory;
     const matchesSearch =
       !searchQuery ||

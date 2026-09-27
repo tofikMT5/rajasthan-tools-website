@@ -59,8 +59,8 @@ export function middleware(req: NextRequest) {
   }
 
   if (sessionToken && isAuthPage) {
-    const dashboardUrl = new URL('/dashboard', req.url);
-    return NextResponse.redirect(dashboardUrl);
+    const posUrl = new URL('/pos', req.url);
+    return NextResponse.redirect(posUrl);
   }
 
   return NextResponse.next();
