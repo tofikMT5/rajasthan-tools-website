@@ -251,7 +251,7 @@ export default function NewPurchasePage() {
                         {p.itemCode} • Cost: {formatKWD(p.costPrice)}
                       </span>
                     </div>
-                    <Button size="icon" variant="ghost" className="h-7 w-7 text-orange-500">
+                    <Button type="button" size="icon" variant="ghost" className="h-7 w-7 text-orange-500">
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
