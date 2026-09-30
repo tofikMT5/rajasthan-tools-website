@@ -18,8 +18,10 @@
 3. ✅ **Vercel UI Cache Bug Fixed:** Fixed the input field visibility bug where the Vercel-deployed app was caching CSS classes, causing input texts to appear light gray. We hardcoded `text-black` to bypass it.
 4. ✅ **Edit Product Translation Fix:** Added English to Arabic auto-translate functionality directly to the Edit Product modal (`products/[id]/page.tsx`), similar to the Add Product modal, with smart handling to avoid overwriting existing names on load.
 5. ✅ **Purchase Invoice Product Add Bug Fixed:** Fixed an issue where adding a product to a new purchase invoice prematurely submitted the form. Added `type="button"` to prevent it and pushed to `rt-billing-system`.
-6. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
-7. **Client Request Backlog:** Proceed with the next changes the client requested.
+21. ✅ **Purchase Invoice Edit Feature:** Added an Edit Invoice button and backend PUT route to safely update items in an existing purchase order, reverting stock appropriately and recalculating supplier balance.
+22. ✅ **Supplier UI Fixes:** Removed the confusing '0 Products' badge and added a 'Purchases' count badge to cleanly display the number of purchase orders made to a supplier.
+23. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
+24. **Client Request Backlog:** Proceed with the next changes the client requested.
 
 ## Do NOT do tomorrow unless asked
 - Full rewrite
