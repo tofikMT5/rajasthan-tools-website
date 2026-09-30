@@ -88,9 +88,6 @@ export default function SuppliersPage() {
                 <div>
                   <h3 className="font-bold text-base text-slate-900 dark:text-white">{s.name}</h3>
                   <div className="flex gap-2 mt-1">
-                    <Badge variant="outline" className="font-mono text-[10px] text-slate-500">
-                      {s._count?.products || 0} Products
-                    </Badge>
                     <Badge variant="outline" className="font-mono text-[10px] bg-emerald-50 text-emerald-600 border-emerald-200">
                       {s._count?.purchases || 0} Purchases
                     </Badge>
