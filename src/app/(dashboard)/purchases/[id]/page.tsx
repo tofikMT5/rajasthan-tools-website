@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ShoppingBag, ArrowLeft, Printer, Trash2, Building2, Calendar, FileText } from 'lucide-react';
+import { ShoppingBag, ArrowLeft, Printer, Trash2, Building2, Calendar, FileText, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -113,7 +113,12 @@ export default function PurchaseDetailPage() {
 
           {/* Purchased Items Table */}
           <div>
-            <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500 mb-3">Purchased Items Breakdown</h3>
+            <div className="flex justify-between items-center mb-3 no-print">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500">Purchased Items Breakdown</h3>
+              <Button onClick={() => router.push(`/purchases/${purchaseId}/edit`)} variant="outline" size="sm" className="gap-2 text-xs font-bold border-orange-200 text-orange-600 hover:bg-orange-50">
+                <Edit className="w-4 h-4" /> Edit Invoice
+              </Button>
+            </div>
             <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl">
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-semibold text-slate-500">

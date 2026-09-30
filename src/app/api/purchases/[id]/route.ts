@@ -76,3 +76,105 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const body = await req.json();
+    const { supplierId, date, notes, items, total } = body;
+
+    const existingPurchase = await db.purchase.findUnique({ where: { id } });
+    if (!existingPurchase) {
+      return NextResponse.json({ error: 'Purchase not found' }, { status: 404 });
+    }
+
+    const oldItems = (existingPurchase.items as any[]) || [];
+
+    await db.$transaction(async (tx) => {
+      // 1. Revert old stock
+      for (const oldItem of oldItems) {
+        if (oldItem.productId) {
+          await tx.product.update({
+            where: { id: oldItem.productId },
+            data: { stockQty: { decrement: Number(oldItem.qty) } }
+          });
+          
+          await tx.stockMovement.create({
+            data: {
+              productId: oldItem.productId,
+              type: 'OUT',
+              qty: Number(oldItem.qty),
+              refType: 'PURCHASE_EDIT_REVERT',
+              refId: existingPurchase.id,
+              note: `Reverted stock for editing Purchase #${existingPurchase.purchaseNo}`,
+              createdBy: 'admin',
+            }
+          });
+        }
+      }
+
+      // 2. Revert old supplier balance
+      if (existingPurchase.supplierId) {
+        await tx.supplier.update({
+          where: { id: existingPurchase.supplierId },
+          data: { balance: { decrement: Number(existingPurchase.total) } }
+        });
+      }
+
+      // 3. Update Purchase record
+      const updatedPurchase = await tx.purchase.update({
+        where: { id },
+        data: {
+          supplierId,
+          date: date ? new Date(date) : existingPurchase.date,
+          total: Number(total),
+          notes: notes || null,
+          items: items,
+        }
+      });
+
+      // 4. Apply new stock
+      for (const newItem of items) {
+        if (newItem.productId) {
+          await tx.product.update({
+            where: { id: newItem.productId },
+            data: {
+              stockQty: { increment: Number(newItem.qty) },
+              costPrice: Number(newItem.costPrice),
+            }
+          });
+
+          await tx.stockMovement.create({
+            data: {
+              productId: newItem.productId,
+              type: 'IN',
+              qty: Number(newItem.qty),
+              refType: 'PURCHASE_EDIT_APPLY',
+              refId: updatedPurchase.id,
+              note: `Applied new stock for edited Purchase #${existingPurchase.purchaseNo}`,
+              createdBy: 'admin',
+            }
+          });
+        }
+      }
+
+      // 5. Apply new supplier balance
+      if (supplierId) {
+        await tx.supplier.update({
+          where: { id: supplierId },
+          data: { balance: { increment: Number(total) } }
+        });
+      }
+    });
+
+    const finalPurchase = await db.purchase.findUnique({
+      where: { id },
+      include: { supplier: true }
+    });
+
+    return NextResponse.json(finalPurchase);
+  } catch (error: any) {
+    console.error('Purchase edit error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
