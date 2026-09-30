@@ -22,7 +22,7 @@
 - Website module is live and connected. Product edit/image upload synced to Live Vercel.
 - **Electron desktop `.exe` installer is successfully building!** Fixed the Windows path limit/crash issue by enabling `asar: true` and excluding `node_modules`. Fixed `winCodeSign` symlink errors by running build commands in Administrator mode. The final `.exe` is generated in `dist-final2/`.
 - **Wiped all test data (invoices, bills, purchases, etc.) to 0 for production handover. Software is now with the shop for real data entry.**
-- **Recent Client Updates (Live on software main):** Fixed Purchase Invoice product addition bug (adding a product was submitting the entire invoice prematurely due to missing `type="button"` on the Add button), Universal Global Search dropdown added to Topbar, POS manual price editing enabled, POS qty backspace fix, and Purchase Order renamed to Purchase Invoice. Software repository separated from website repository. Added 'Edit Invoice' feature to modify existing purchase invoices.
+- **Recent Client Updates (Live on software main):** Fixed Purchase Invoice product addition bug, Universal Global Search dropdown added to Topbar, POS manual price editing enabled, POS qty backspace fix, and Purchase Order renamed to Purchase Invoice. Software repository separated from website repository. Added 'Edit Invoice' feature to modify existing purchase invoices. Added 'Purchases' count badge to Supplier cards to clarify supplier activity.
 
 ## Important Paths
 - Project path: `E:\Downloads chrome\Antigravity Project\Rajasthan Tools Software\rt-billing-system`
