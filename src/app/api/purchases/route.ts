@@ -9,9 +9,13 @@ export async function GET(req: Request) {
 
     const where: any = {};
     if (search) {
+      const searchUpper = search.toUpperCase();
+      const isStatusSearch = searchUpper === 'PAID' || searchUpper === 'UNPAID';
+
       where.OR = [
         { purchaseNo: { contains: search, mode: 'insensitive' } },
         { supplier: { name: { contains: search, mode: 'insensitive' } } },
+        ...(isStatusSearch ? [{ status: searchUpper }] : []),
       ];
     }
     if (supplierId) where.supplierId = supplierId;
@@ -34,7 +38,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { supplierId, purchaseNo, date, notes, items, total } = body;
+    const { supplierId, purchaseNo, date, notes, status, items, total } = body;
 
     if (!supplierId || !items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: 'Supplier and at least 1 item are required' }, { status: 400 });
@@ -50,6 +54,7 @@ export async function POST(req: Request) {
         date: date ? new Date(date) : new Date(),
         total: Number(total),
         notes: notes || null,
+        status: status || 'PAID',
         items: items,
       },
       include: {

@@ -46,6 +46,7 @@ export default function PosPage() {
     extraAmount,
     narration,
     payments,
+    invoiceStatus,
     heldBills,
     addToCart,
     updateQty,
@@ -58,6 +59,7 @@ export default function PosPage() {
     setDiscountAmount,
     setExtraAmount,
     setNarration,
+    setInvoiceStatus,
     setPaymentAmount,
     resetPayments,
     holdBill,
@@ -206,6 +208,7 @@ export default function PosPage() {
         netAmount: Number(netAmount.toFixed(3)),
         paidAmount: Number(totalPaid.toFixed(3)),
         dueAmount: Number(dueAmount.toFixed(3)),
+        status: invoiceStatus,
       };
 
       const res = await fetch('/api/invoices', {
@@ -578,6 +581,28 @@ export default function PosPage() {
                 <span className="text-xs text-slate-300 font-mono">Gross: {formatKWD(grossAmount)}</span>
               </div>
               <span className="text-2xl font-black font-mono text-white">{formatKWD(netAmount)}</span>
+            </div>
+
+            {/* Paid / Unpaid Toggle */}
+            <div className="flex gap-2 bg-slate-900 p-1 rounded-lg border border-slate-800">
+              <button
+                type="button"
+                onClick={() => setInvoiceStatus('PAID')}
+                className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${
+                  invoiceStatus === 'PAID' ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/50' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Paid
+              </button>
+              <button
+                type="button"
+                onClick={() => setInvoiceStatus('UNPAID')}
+                className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${
+                  invoiceStatus === 'UNPAID' ? 'bg-rose-600/20 text-rose-400 border border-rose-500/50' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Unpaid
+              </button>
             </div>
 
             {/* Payment Mode Selection */}

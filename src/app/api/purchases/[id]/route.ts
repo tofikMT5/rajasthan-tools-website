@@ -178,3 +178,23 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const body = await req.json();
+    const { status } = body;
+
+    const purchase = await db.purchase.update({
+      where: { id },
+      data: { status },
+      include: {
+        supplier: true,
+      },
+    });
+
+    return NextResponse.json(purchase);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

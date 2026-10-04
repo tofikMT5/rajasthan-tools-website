@@ -25,3 +25,28 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const body = await req.json();
+    const { status } = body;
+
+    const invoice = await db.invoice.update({
+      where: { id },
+      data: { status },
+      include: {
+        customer: true,
+        items: {
+          include: { product: true },
+        },
+        payments: true,
+        salesman: true,
+      },
+    });
+
+    return NextResponse.json(invoice);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

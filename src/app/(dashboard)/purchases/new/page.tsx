@@ -21,6 +21,7 @@ export default function NewPurchasePage() {
   const [purchaseNo, setPurchaseNo] = useState(`PUR-${Date.now().toString().slice(-6)}`);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState('');
+  const [status, setStatus] = useState('PAID');
   const [items, setItems] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -142,6 +143,7 @@ export default function NewPurchasePage() {
           purchaseNo,
           date,
           notes,
+          status,
           items,
           total: Number(grandTotal.toFixed(3)),
         }),
@@ -318,9 +320,31 @@ export default function NewPurchasePage() {
               </div>
 
               {/* Grand Total Banner */}
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center text-white">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Grand Total Purchase Value</span>
-                <span className="text-2xl font-black font-mono text-emerald-400">{formatKWD(grandTotal)}</span>
+              <div className="space-y-3">
+                <div className="flex gap-2 bg-slate-900 p-1 rounded-lg border border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setStatus('PAID')}
+                    className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${
+                      status === 'PAID' ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/50' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    Paid
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStatus('UNPAID')}
+                    className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${
+                      status === 'UNPAID' ? 'bg-rose-600/20 text-rose-400 border border-rose-500/50' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    Unpaid
+                  </button>
+                </div>
+                <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center text-white">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Grand Total Purchase Value</span>
+                  <span className="text-2xl font-black font-mono text-emerald-400">{formatKWD(grandTotal)}</span>
+                </div>
               </div>
             </CardContent>
 

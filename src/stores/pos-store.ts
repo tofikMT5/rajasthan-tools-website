@@ -38,6 +38,7 @@ interface PosState {
   extraAmount: number;
   narration: string;
   salesmanId: string | null;
+  invoiceStatus: 'PAID' | 'UNPAID';
   payments: PaymentItem[];
   heldBills: Array<{
     id: string;
@@ -59,6 +60,7 @@ interface PosState {
   setExtraAmount: (extra: number) => void;
   setNarration: (notes: string) => void;
   setSalesmanId: (salesmanId: string | null) => void;
+  setInvoiceStatus: (status: 'PAID' | 'UNPAID') => void;
   setPaymentAmount: (mode: PaymentItem['mode'], amount: number, reference?: string) => void;
   resetPayments: () => void;
   holdBill: () => void;
@@ -80,6 +82,7 @@ export const usePosStore = create<PosState>((set, get) => ({
   extraAmount: 0,
   narration: '',
   salesmanId: null,
+  invoiceStatus: 'PAID',
   payments: [{ mode: 'CASH', amount: 0 }],
   heldBills: [],
 
@@ -180,6 +183,7 @@ export const usePosStore = create<PosState>((set, get) => ({
       discountAmount: 0,
       extraAmount: 0,
       narration: '',
+      invoiceStatus: 'PAID',
       payments: [{ mode: 'CASH', amount: 0 }],
     });
   },
@@ -190,6 +194,7 @@ export const usePosStore = create<PosState>((set, get) => ({
   setExtraAmount: (extraAmount) => set({ extraAmount }),
   setNarration: (narration) => set({ narration }),
   setSalesmanId: (salesmanId) => set({ salesmanId }),
+  setInvoiceStatus: (invoiceStatus) => set({ invoiceStatus }),
 
   setPaymentAmount: (mode, amount, reference) => {
     const { payments } = get();
@@ -226,6 +231,7 @@ export const usePosStore = create<PosState>((set, get) => ({
       discountAmount: 0,
       extraAmount: 0,
       narration: '',
+      invoiceStatus: 'PAID',
     });
   },
 

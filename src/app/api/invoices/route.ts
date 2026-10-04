@@ -11,9 +11,13 @@ export async function GET(req: Request) {
     const where: any = {};
     if (search) {
       const numSearch = parseInt(search);
+      const searchUpper = search.toUpperCase();
+      const isStatusSearch = searchUpper === 'PAID' || searchUpper === 'UNPAID';
+
       where.OR = [
         { customerNameSnap: { contains: search, mode: 'insensitive' } },
         ...(isNaN(numSearch) ? [] : [{ invoiceNo: numSearch }]),
+        ...(isStatusSearch ? [{ status: searchUpper }] : []),
       ];
     }
 
@@ -88,7 +92,7 @@ export async function POST(req: Request) {
           netAmount: validated.netAmount,
           paidAmount: validated.paidAmount,
           dueAmount: validated.dueAmount,
-          status: validated.dueAmount <= 0 ? 'PAID' : validated.paidAmount > 0 ? 'PARTIAL' : 'UNPAID',
+          status: validated.status || (validated.dueAmount <= 0 ? 'PAID' : validated.paidAmount > 0 ? 'PARTIAL' : 'UNPAID'),
           amountInWordsEn,
           amountInWordsAr,
           createdBy: 'admin',

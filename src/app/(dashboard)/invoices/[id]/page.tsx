@@ -89,6 +89,25 @@ export default function InvoiceViewPage() {
     window.open(waUrl, '_blank');
   };
 
+  const handleUpdateStatus = async (newStatus: string) => {
+    try {
+      const res = await fetch(`/api/invoices/${invoiceId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setInvoice(updated);
+        toast.success(`Invoice marked as ${newStatus}`);
+      } else {
+        toast.error('Failed to update status');
+      }
+    } catch (e) {
+      toast.error('Error updating status');
+    }
+  };
+
   if (isLoading) return <div className="p-8 text-center text-slate-500">Loading invoice details...</div>;
 
   if (!invoice) {
@@ -107,6 +126,25 @@ export default function InvoiceViewPage() {
         <Button variant="ghost" onClick={() => router.push('/invoices')} className="text-slate-300 hover:text-white gap-2 text-xs">
           <ArrowLeft className="w-4 h-4" /> Back to Invoices
         </Button>
+
+        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
+          <button
+            onClick={() => handleUpdateStatus('PAID')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${
+              invoice.status === 'PAID' ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/50' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Paid
+          </button>
+          <button
+            onClick={() => handleUpdateStatus('UNPAID')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${
+              invoice.status === 'UNPAID' ? 'bg-rose-600/20 text-rose-400 border border-rose-500/50' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Unpaid
+          </button>
+        </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <Button onClick={() => window.print()} className="bg-blue-600 hover:bg-blue-500 text-white font-bold gap-2 text-xs">

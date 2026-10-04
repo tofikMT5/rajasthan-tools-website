@@ -175,6 +175,7 @@ export default function PurchasesPage() {
                   <th className="p-3.5">Supplier</th>
                   <th className="p-3.5">Items Count</th>
                   <th className="p-3.5">Total Amount</th>
+                  <th className="p-3.5">Status</th>
                   <th className="p-3.5">Notes</th>
                   <th className="p-3.5 pr-6 text-right">Actions</th>
                 </tr>
@@ -193,6 +194,9 @@ export default function PurchasesPage() {
                         </Badge>
                       </td>
                       <td className="p-3.5 font-mono font-extrabold text-emerald-600">{formatKWD(p.total)}</td>
+                      <td className="p-3.5">
+                        <Badge variant={p.status === 'PAID' ? 'success' : 'warning'}>{p.status || 'PAID'}</Badge>
+                      </td>
                       <td className="p-3.5 text-slate-500 max-w-xs truncate">{p.notes || '-'}</td>
                       <td className="p-3.5 pr-6 text-right">
                         <div className="flex items-center justify-end gap-1">

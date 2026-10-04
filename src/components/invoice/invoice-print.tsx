@@ -215,6 +215,20 @@ export function InvoicePrint({ invoice }: InvoicePrintProps) {
             <span>CASH INVOICE</span> <span style={{ margin: '0 6px' }}>/</span> <span style={{ fontFamily: '"Noto Naskh Arabic", sans-serif' }}>فاتورة نقداً</span>
           </div>
         )}
+        
+        {/* Status Badge */}
+        <div style={{
+          marginLeft: 'auto',
+          padding: '4px 12px',
+          borderRadius: '4px',
+          fontSize: '12px',
+          fontWeight: 'bold',
+          backgroundColor: invoice.status === 'PAID' ? '#dcfce7' : '#ffe4e6',
+          color: invoice.status === 'PAID' ? '#166534' : '#9f1239',
+          border: `1px solid ${invoice.status === 'PAID' ? '#86efac' : '#fda4af'}`
+        }}>
+          {invoice.status}
+        </div>
       </div>
 
       {/* 3. CUSTOMER INFO BAR (2 Columns Table) */}

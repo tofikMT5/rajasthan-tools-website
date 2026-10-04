@@ -209,6 +209,7 @@ model Purchase {
   date       DateTime @default(now())
   total      Decimal  @db.Decimal(12, 3)
   notes      String?
+  status     String   @default("PAID")
   createdAt  DateTime @default(now())
   items      Json
 }

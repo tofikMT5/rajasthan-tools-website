@@ -52,6 +52,25 @@ export default function PurchaseDetailPage() {
     }
   };
 
+  const handleUpdateStatus = async (newStatus: string) => {
+    try {
+      const res = await fetch(`/api/purchases/${purchaseId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setPurchase(updated);
+        toast.success(`Purchase marked as ${newStatus}`);
+      } else {
+        toast.error('Failed to update status');
+      }
+    } catch (e) {
+      toast.error('Error updating status');
+    }
+  };
+
   if (isLoading) return <div className="p-8 text-center text-slate-500">Loading purchase details...</div>;
 
   if (!purchase) {
@@ -72,6 +91,24 @@ export default function PurchaseDetailPage() {
         <Button variant="ghost" onClick={() => router.push('/purchases')} className="gap-2 text-slate-600">
           <ArrowLeft className="w-4 h-4" /> Back to Purchases
         </Button>
+        <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+          <button
+            onClick={() => handleUpdateStatus('PAID')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${
+              purchase.status === 'PAID' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            Paid
+          </button>
+          <button
+            onClick={() => handleUpdateStatus('UNPAID')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${
+              purchase.status === 'UNPAID' ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            Unpaid
+          </button>
+        </div>
         <div className="flex gap-2">
           <Button onClick={() => window.print()} className="bg-slate-900 hover:bg-slate-800 text-white font-bold gap-2 text-xs">
             <Printer className="w-4 h-4" /> Print Purchase Order
@@ -89,6 +126,7 @@ export default function PurchaseDetailPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold text-slate-900 dark:text-white">Purchase Order #{purchase.purchaseNo}</h1>
               <Badge variant="success">STOCK RECEIVED</Badge>
+              <Badge variant={purchase.status === 'PAID' ? 'success' : 'warning'}>{purchase.status || 'PAID'}</Badge>
             </div>
             <p className="text-xs text-slate-500 font-mono mt-1">Date: {formatDate(purchase.date)}</p>
           </div>
