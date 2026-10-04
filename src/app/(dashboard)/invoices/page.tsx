@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FileText, Search, Printer, Eye, MessageSquare, Plus, Calendar, Filter } from 'lucide-react';
+import { FileText, Search, Printer, Eye, MessageSquare, Plus, Calendar, Filter, Trash2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,6 +19,7 @@ export default function InvoicesPage() {
   const { globalSearch } = useSearchStore();
   const search = localSearch || globalSearch;
   
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [toggles, setToggles] = useState<any>(null);
 
   useEffect(() => {
@@ -56,6 +57,26 @@ export default function InvoicesPage() {
     }, 300);
     return () => clearTimeout(timer);
   }, [search]);
+
+  const handleDeleteInvoice = async () => {
+    if (!deleteTargetId) return;
+    try {
+      const res = await fetch(`/api/invoices/${deleteTargetId}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        toast.success('Invoice deleted & stock restored successfully!');
+        setDeleteTargetId(null);
+        fetchInvoices();
+      } else {
+        const err = await res.json();
+        toast.error(err.error || 'Failed to delete invoice');
+      }
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
 
   return (
     <FeatureLockOverlay isLocked={Boolean(toggles && !toggles.enableInvoices)}>
@@ -133,6 +154,14 @@ export default function InvoicesPage() {
                             <Printer className="w-3.5 h-3.5" />
                           </Button>
                         </Link>
+                        <Button
+                          onClick={() => setDeleteTargetId(inv.id)}
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 text-xs text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -143,6 +172,31 @@ export default function InvoicesPage() {
         </CardContent>
       </Card>
       </div>
+
+      {/* CONFIRM DELETE MODAL WITH REVERSAL WARNING */}
+      {deleteTargetId && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl space-y-4">
+            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950 text-red-600 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Delete Sales Invoice?</h3>
+              <p className="text-xs text-slate-500 mt-1">
+                This action will automatically restore stock quantities and adjust customer balance.
+              </p>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button onClick={() => setDeleteTargetId(null)} variant="outline" className="w-full text-xs">
+                Keep Invoice
+              </Button>
+              <Button onClick={handleDeleteInvoice} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs">
+                Restore Stock & Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </FeatureLockOverlay>
   );
 }
