@@ -20,8 +20,9 @@
 5. ✅ **Purchase Invoice Product Add Bug Fixed:** Fixed an issue where adding a product to a new purchase invoice prematurely submitted the form. Added `type="button"` to prevent it and pushed to `rt-billing-system`.
 21. ✅ **Purchase Invoice Edit Feature:** Added an Edit Invoice button and backend PUT route to safely update items in an existing purchase order, reverting stock appropriately and recalculating supplier balance.
 22. ✅ **Supplier UI Fixes:** Removed the confusing '0 Products' badge and added a 'Purchases' count badge to cleanly display the number of purchase orders made to a supplier.
-23. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
-24. **Client Request Backlog:** Proceed with the next changes the client requested.
+23. ✅ **Delete Invoice Features:** Added functionality to delete Sales Invoices and Purchase Invoices with automated stock restoration and balance recalculations. Fixed the database schema mismatch safely.
+24. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
+25. **Client Request Backlog:** Wait for the client to review the latest live changes on Vercel and provide the next set of requested changes.
 
 ## Do NOT do tomorrow unless asked
 - Full rewrite
