@@ -18,6 +18,7 @@ import {
   BarChart3,
   UserCog,
   Settings,
+  Wallet,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -50,6 +51,7 @@ export function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
     { label: t('reports'), href: '/reports', icon: BarChart3, roles: ['SUPER_ADMIN', 'ADMIN', 'CASHIER', 'SALESMAN', 'VIEWER'] },
     { label: t('users'), href: '/users', icon: UserCog, roles: ['SUPER_ADMIN', 'ADMIN'] },
     { label: t('settings'), href: '/settings', icon: Settings, roles: ['SUPER_ADMIN', 'ADMIN'] },
+    { label: t('pettyCash'), href: '/petty-cash', icon: Wallet, roles: ['SUPER_ADMIN', 'ADMIN', 'CASHIER', 'SALESMAN', 'VIEWER'] },
   ];
 
   const filteredItems = menuItems.filter((item) => item.roles.includes(userRole));

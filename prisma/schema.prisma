@@ -278,6 +278,7 @@ model FeatureToggles {
   enableCustomers  Boolean @default(true)
   enableSuppliers  Boolean @default(true)
   enablePurchases  Boolean @default(true)
+  enablePettyCash  Boolean @default(true)
   enableReports    Boolean @default(true)
   enableUsers      Boolean @default(true)
   enableSettings   Boolean @default(true)
@@ -290,3 +291,28 @@ model FeatureToggles {
 
   updatedAt DateTime @updatedAt
 }
+
+model PettyCashVoucher {
+  id             String   @id @default(cuid())
+  voucherNo      String   @unique
+  date           DateTime @default(now())
+  type           String   @default("PAYMENT") // PAYMENT (Cash Paid / Out) or RECEIPT (Cash Received / In)
+  paidTo         String
+  paymentMethod  String   @default("Cash")
+  category       String
+  description    String
+  amount         Decimal  @db.Decimal(12, 3)
+  runningBalance Decimal  @default(0) @db.Decimal(12, 3)
+  preparedBy     String?
+  approvedBy     String?
+  receivedBy     String?
+  status         String   @default("APPROVED")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([voucherNo])
+  @@index([date])
+  @@index([category])
+  @@index([type])
+}
+

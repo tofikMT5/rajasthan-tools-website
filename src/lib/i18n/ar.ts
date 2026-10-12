@@ -21,6 +21,7 @@ export const ar = {
   reports: 'التقارير',
   users: 'المستخدمون',
   settings: 'الإعدادات',
+  pettyCash: 'المصروفات النثرية',
   logout: 'تسجيل الخروج',
   searchPlaceholder: 'ابحث عن منتجات، فواتير، عملاء...',
   todaySales: 'مبيعات اليوم',

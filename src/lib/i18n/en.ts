@@ -21,6 +21,7 @@ export const en = {
   reports: 'Reports',
   users: 'Users',
   settings: 'Settings',
+  pettyCash: 'Petty Cash',
   logout: 'Logout',
   searchPlaceholder: 'Search products, invoices, customers... (Cmd+K)',
   todaySales: "Today's Sales",
