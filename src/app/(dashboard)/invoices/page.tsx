@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FileText, Search, Printer, Eye, MessageSquare, Plus, Calendar, Filter, Trash2, AlertTriangle } from 'lucide-react';
+import { FileText, Search, Printer, Eye, MessageSquare, Plus, Calendar, Filter, Trash2, AlertTriangle, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -147,6 +147,11 @@ export default function InvoicesPage() {
                         <Link href={`/invoices/${inv.id}`}>
                           <Button size="sm" variant="ghost" className="h-7 text-xs text-blue-600 gap-1">
                             <Eye className="w-3.5 h-3.5" /> View
+                          </Button>
+                        </Link>
+                        <Link href={`/invoices/${inv.id}/edit`}>
+                          <Button size="sm" variant="ghost" title="Edit Invoice" className="h-7 text-xs text-orange-500 hover:text-orange-700">
+                            <Edit className="w-3.5 h-3.5" />
                           </Button>
                         </Link>
                         <Link href={`/invoices/${inv.id}?print=true`}>

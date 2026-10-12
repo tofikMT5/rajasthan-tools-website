@@ -22,8 +22,9 @@
 22. ✅ **Supplier UI Fixes:** Removed the confusing '0 Products' badge and added a 'Purchases' count badge to cleanly display the number of purchase orders made to a supplier.
 23. ✅ **Delete Invoice Features:** Added functionality to delete Sales Invoices and Purchase Invoices with automated stock restoration and balance recalculations. Fixed the database schema mismatch safely.
 24. ✅ **Petty Cash Management Module Added:** Added `/petty-cash` module with sidebar item below Settings, sequential voucher generation, running cash balance, receipt/payment entries, print format, and Excel export.
-25. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
-26. **Client Request Backlog:** Proceed with remaining changes requested by the client.
+25. ✅ **Edit Sales Invoice Feature Added:** Added `Edit Invoice` button on `/invoices/[id]` and table, `/invoices/[id]/edit` full editor, and backend stock-safe `PUT /api/invoices/[id]` route.
+26. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
+27. **Client Request Backlog:** Proceed with remaining changes requested by the client.
 
 ## Do NOT do tomorrow unless asked
 - Full rewrite

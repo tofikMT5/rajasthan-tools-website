@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { Printer, Download, MessageSquare, ArrowLeft, Copy, XCircle } from 'lucide-react';
+import { Printer, Download, MessageSquare, ArrowLeft, Copy, XCircle, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { InvoicePrint } from '@/components/invoice/invoice-print';
 import { toast } from 'sonner';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { formatDate } from '@/lib/utils';
 
 export default function InvoiceViewPage() {
   const params = useParams();
@@ -147,6 +148,13 @@ export default function InvoiceViewPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <Button
+            onClick={() => router.push(`/invoices/${invoiceId}/edit`)}
+            className="bg-orange-500 hover:bg-orange-600 text-white font-bold gap-2 text-xs"
+          >
+            <Edit className="w-4 h-4" /> Edit Invoice
+          </Button>
+
           <Button onClick={() => window.print()} className="bg-blue-600 hover:bg-blue-500 text-white font-bold gap-2 text-xs">
             <Printer className="w-4 h-4" /> Print Invoice
           </Button>
@@ -159,6 +167,24 @@ export default function InvoiceViewPage() {
             <MessageSquare className="w-4 h-4" /> WhatsApp
           </Button>
         </div>
+      </div>
+
+      {/* Quick Edit Action Banner (Matching Image 2 Style) */}
+      <div className="flex justify-between items-center bg-white dark:bg-slate-900 px-6 py-3.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm no-print">
+        <div>
+          <span className="text-xs text-slate-400 font-semibold uppercase block">Invoice Information</span>
+          <span className="font-bold text-slate-900 dark:text-white text-sm">
+            Bill #RT-{invoice.invoiceNo} &bull; {invoice.customerNameSnap || 'Cash Customer'}
+          </span>
+        </div>
+        <Button
+          onClick={() => router.push(`/invoices/${invoiceId}/edit`)}
+          variant="outline"
+          size="sm"
+          className="gap-2 text-xs font-bold border-orange-200 text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 shadow-sm"
+        >
+          <Edit className="w-4 h-4" /> Edit Invoice
+        </Button>
       </div>
 
       {/* Render Pixel-Perfect Invoice Print Template */}
