@@ -16,6 +16,7 @@ export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [localSearch, setLocalSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PAID' | 'UNPAID'>('ALL');
   const { globalSearch } = useSearchStore();
   const search = localSearch || globalSearch;
   
@@ -40,6 +41,7 @@ export default function InvoicesPage() {
       setIsLoading(true);
       const url = new URL('/api/invoices', window.location.origin);
       if (search) url.searchParams.append('search', search);
+      if (statusFilter && statusFilter !== 'ALL') url.searchParams.append('status', statusFilter);
 
       const res = await fetch(url.toString());
       const data = await res.json();
@@ -56,7 +58,7 @@ export default function InvoicesPage() {
       fetchInvoices();
     }, 300);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, statusFilter]);
 
   const handleDeleteInvoice = async () => {
     if (!deleteTargetId) return;
@@ -96,9 +98,9 @@ export default function InvoicesPage() {
         </Link>
       </div>
 
-      {/* Search Bar */}
-      <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div className="relative flex-1">
+      {/* Search Bar & Status Filter */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
           <Input
             value={localSearch}
@@ -106,6 +108,43 @@ export default function InvoicesPage() {
             placeholder="Search by Bill No (e.g. 1005) or Customer name..."
             className="pl-10 h-10"
           />
+        </div>
+
+        {/* Status Filter Toggle Pills matching Image 1 & 3 */}
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 w-full sm:w-auto justify-center">
+          <button
+            type="button"
+            onClick={() => setStatusFilter('ALL')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+              statusFilter === 'ALL'
+                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+            }`}
+          >
+            All
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter('PAID')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+              statusFilter === 'PAID'
+                ? 'bg-emerald-600 text-white shadow-sm'
+                : 'text-slate-500 hover:text-emerald-600 dark:text-slate-400'
+            }`}
+          >
+            Paid
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter('UNPAID')}
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+              statusFilter === 'UNPAID'
+                ? 'bg-rose-600 text-white shadow-sm'
+                : 'text-slate-500 hover:text-rose-600 dark:text-slate-400'
+            }`}
+          >
+            Unpaid
+          </button>
         </div>
       </div>
 

@@ -7,18 +7,22 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search') || '';
+    const status = searchParams.get('status') || '';
 
     const where: any = {};
     if (search) {
       const numSearch = parseInt(search);
-      const searchUpper = search.toUpperCase();
-      const isStatusSearch = searchUpper === 'PAID' || searchUpper === 'UNPAID';
-
       where.OR = [
         { customerNameSnap: { contains: search, mode: 'insensitive' } },
         ...(isNaN(numSearch) ? [] : [{ invoiceNo: numSearch }]),
-        ...(isStatusSearch ? [{ status: searchUpper }] : []),
       ];
+    }
+    if (status && status !== 'ALL') {
+      if (status.toUpperCase() === 'UNPAID') {
+        where.status = { in: ['UNPAID', 'PARTIAL'] };
+      } else {
+        where.status = status.toUpperCase();
+      }
     }
 
     const invoices = await db.invoice.findMany({

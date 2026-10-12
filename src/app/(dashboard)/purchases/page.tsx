@@ -21,6 +21,7 @@ export default function PurchasesPage() {
   const search = localSearch || globalSearch;
   
   const [selectedSupplier, setSelectedSupplier] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [toggles, setToggles] = useState<any>(null);
 
@@ -43,6 +44,7 @@ export default function PurchasesPage() {
       const url = new URL('/api/purchases', window.location.origin);
       if (search) url.searchParams.append('search', search);
       if (selectedSupplier) url.searchParams.append('supplierId', selectedSupplier);
+      if (statusFilter && statusFilter !== 'ALL') url.searchParams.append('status', statusFilter);
 
       const res = await fetch(url.toString());
       const data = await res.json();
@@ -71,7 +73,7 @@ export default function PurchasesPage() {
       fetchPurchases();
     }, 300);
     return () => clearTimeout(timer);
-  }, [search, selectedSupplier]);
+  }, [search, selectedSupplier, statusFilter]);
 
   const handleDeletePurchase = async () => {
     if (!deleteTargetId) return;
@@ -137,7 +139,7 @@ export default function PurchasesPage() {
         </Card>
       </div>
 
-      {/* Search & Supplier Filter */}
+      {/* Search, Status & Supplier Filter */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
@@ -149,18 +151,57 @@ export default function PurchasesPage() {
           />
         </div>
 
-        <select
-          value={selectedSupplier}
-          onChange={(e) => setSelectedSupplier(e.target.value)}
-          className="h-10 px-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none w-full sm:w-auto"
-        >
-          <option value="">All Suppliers</option>
-          {suppliers.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
+          {/* Status Filter Toggle Pills matching Image 1 & 2 */}
+          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+            <button
+              type="button"
+              onClick={() => setStatusFilter('ALL')}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                statusFilter === 'ALL'
+                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                  : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+              }`}
+            >
+              All
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('PAID')}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                statusFilter === 'PAID'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-slate-500 hover:text-emerald-600 dark:text-slate-400'
+              }`}
+            >
+              Paid
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('UNPAID')}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                statusFilter === 'UNPAID'
+                  ? 'bg-rose-600 text-white shadow-sm'
+                  : 'text-slate-500 hover:text-rose-600 dark:text-slate-400'
+              }`}
+            >
+              Unpaid
+            </button>
+          </div>
+
+          <select
+            value={selectedSupplier}
+            onChange={(e) => setSelectedSupplier(e.target.value)}
+            className="h-10 px-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none w-full sm:w-auto"
+          >
+            <option value="">All Suppliers</option>
+            {suppliers.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Purchases Data Table */}

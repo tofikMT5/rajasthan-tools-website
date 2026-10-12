@@ -6,19 +6,19 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search') || '';
     const supplierId = searchParams.get('supplierId') || '';
+    const status = searchParams.get('status') || '';
 
     const where: any = {};
     if (search) {
-      const searchUpper = search.toUpperCase();
-      const isStatusSearch = searchUpper === 'PAID' || searchUpper === 'UNPAID';
-
       where.OR = [
         { purchaseNo: { contains: search, mode: 'insensitive' } },
         { supplier: { name: { contains: search, mode: 'insensitive' } } },
-        ...(isStatusSearch ? [{ status: searchUpper }] : []),
       ];
     }
     if (supplierId) where.supplierId = supplierId;
+    if (status && status !== 'ALL') {
+      where.status = status.toUpperCase();
+    }
 
     const purchases = await db.purchase.findMany({
       where,
