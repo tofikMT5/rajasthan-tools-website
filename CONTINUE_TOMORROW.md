@@ -29,8 +29,9 @@
 29. ✅ **Supplier Price Comparison & Purchase History by Product Added:** Added dedicated API and modal to search any product and see all suppliers who supplied it, their prices, who gave the lowest price (🏆 Best Rate), latest purchase date/price, and chronological order timeline. Integrated into `/purchases`, `/purchases/new`, `/purchases/[id]/edit`, and `/products`.
 30. ✅ **Customer Account Statement & Date-Range PDF Export Added:** Added dedicated `Statement` button on `/customers` table row (matching screenshot) and `/customers/[id]`. Added date-range filtering (Presets: Last 2 Months, This Month, Last Month, Last 30 Days, All Time, Custom), total invoices count, total paid, remaining due balance, payment breakdown (Cash, K-Net, Card, etc.), chronological transactions ledger, and high-quality A4 printable/PDF export component. Fixed paidAmount calculation for PAID status invoices.
 31. ✅ **Supplier Account Statement & Date-Range PDF Export Added:** Added dedicated `Statement` button on every supplier card on `/suppliers` (matching client screenshot). Added date-range filtering, total purchases value, total amount paid, total balance due to supplier, payment method breakdown, detailed purchases ledger table, and high-quality A4 printable/PDF export component.
-32. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
-33. **Client Request Backlog:** Proceed with remaining changes requested by the client.
+32. ✅ **Live Production Deploy to `main` (Commits 1894cc6 & 1e3972f):** Both GitHub remotes (`software/main` and `origin/main`) synced and pushed. Vercel deployment triggered on `rt-billing-system.vercel.app`.
+33. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
+34. **Client Request Backlog:** Proceed with remaining changes requested by the client.
 
 ## Do NOT do tomorrow unless asked
 - Full rewrite
