@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Plus, Search, Eye, Trash2, Calendar, Building2, AlertTriangle } from 'lucide-react';
+import { ShoppingBag, Plus, Search, Eye, Trash2, Calendar, Building2, AlertTriangle, TrendingDown } from 'lucide-react';
+import { SupplierPriceCompareModal } from '@/components/shared/SupplierPriceCompareModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -23,6 +24,8 @@ export default function PurchasesPage() {
   const [selectedSupplier, setSelectedSupplier] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [showPriceCompareModal, setShowPriceCompareModal] = useState(false);
+  const [compareProductId, setCompareProductId] = useState<string | undefined>(undefined);
   const [toggles, setToggles] = useState<any>(null);
 
   useEffect(() => {
@@ -108,11 +111,24 @@ export default function PurchasesPage() {
           </h1>
           <p className="text-sm text-slate-500">Stock intake orders, supplier invoices, and cost updates.</p>
         </div>
-        <Link href="/purchases/new">
+        <div className="flex items-center gap-2.5">
+          <Button
+            type="button"
+            onClick={() => {
+              setCompareProductId(undefined);
+              setShowPriceCompareModal(true);
+            }}
+            variant="outline"
+            className="border-emerald-500/60 bg-emerald-50/50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-900/50 font-bold gap-2 text-xs shadow-sm h-10 px-4 rounded-xl"
+          >
+            <TrendingDown className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Compare Supplier Prices
+          </Button>
+          <Link href="/purchases/new">
           <Button className="bg-orange-500 hover:bg-orange-600 text-white font-bold gap-2">
             <Plus className="w-4 h-4" /> New Purchase Invoice
           </Button>
         </Link>
+        </div>
       </div>
 
       {/* 3 Summary Cards */}
@@ -137,6 +153,36 @@ export default function PurchasesPage() {
             <div className="text-2xl font-black text-blue-600 mt-1">{suppliers.length} Suppliers</div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Quick Supplier Rate Lookup Banner */}
+      <div className="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 border border-emerald-500/30 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-3 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold shrink-0">
+            <TrendingDown className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+              <span>Supplier Price Comparison & Rate History</span>
+              <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-300 font-mono">
+                FIND CHEAPEST SUPPLIER
+              </Badge>
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Search any product to see which suppliers supplied it, order history, and who gave the lowest cost price.
+            </p>
+          </div>
+        </div>
+        <Button
+          type="button"
+          onClick={() => {
+            setCompareProductId(undefined);
+            setShowPriceCompareModal(true);
+          }}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs gap-1.5 shrink-0 h-9 px-4 rounded-xl"
+        >
+          <Search className="w-3.5 h-3.5" /> Lookup Product Rates
+        </Button>
       </div>
 
       {/* Search, Status & Supplier Filter */}
@@ -175,6 +221,17 @@ export default function PurchasesPage() {
               }`}
             >
               Paid
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('PARTIAL')}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                statusFilter === 'PARTIAL'
+                  ? 'bg-amber-500 text-white shadow-sm'
+                  : 'text-slate-500 hover:text-amber-600 dark:text-slate-400'
+              }`}
+            >
+              Partial
             </button>
             <button
               type="button"
@@ -236,7 +293,7 @@ export default function PurchasesPage() {
                       </td>
                       <td className="p-3.5 font-mono font-extrabold text-emerald-600">{formatKWD(p.total)}</td>
                       <td className="p-3.5">
-                        <Badge variant={p.status === 'PAID' ? 'success' : 'warning'}>{p.status || 'PAID'}</Badge>
+                        <Badge variant={p.status === 'PAID' ? 'success' : p.status === 'PARTIAL' ? 'warning' : 'destructive'}>{p.status || 'PAID'}</Badge>
                       </td>
                       <td className="p-3.5 text-slate-500 max-w-xs truncate">{p.notes || '-'}</td>
                       <td className="p-3.5 pr-6 text-right">
@@ -289,6 +346,13 @@ export default function PurchasesPage() {
           </div>
         </div>
       )}
+
+      {/* Supplier Price Comparison Modal */}
+      <SupplierPriceCompareModal
+        isOpen={showPriceCompareModal}
+        onClose={() => setShowPriceCompareModal(false)}
+        initialProductId={compareProductId}
+      />
       </div>
     </FeatureLockOverlay>
   );

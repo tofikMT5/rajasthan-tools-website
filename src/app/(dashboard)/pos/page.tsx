@@ -52,6 +52,7 @@ export default function PosPage() {
     updateQty,
     setQty,
     updatePrice,
+    updateItemDescription,
     removeFromCart,
     clearCart,
     setCustomer,
@@ -136,7 +137,33 @@ export default function PosPage() {
   }, []);
 
   // Filter products by category & search query
+  const isDummySearch = searchQuery.trim().toLowerCase() === 'dummy';
+
+  const handleSelectDummyProduct = () => {
+    let dummyProd = products.find((p) => p.itemCode === 'DUMMY');
+    if (!dummyProd) {
+      dummyProd = {
+        id: 'cmw0c5u9o00011xn11dpsan9r',
+        itemCode: 'DUMMY',
+        nameEn: 'Previous Summary Sales',
+        nameAr: 'مبيعات سابقة',
+        unit: 'PCS',
+        costPrice: 0,
+        salePrice: 0,
+        stockQty: 999999,
+      };
+    }
+    const existingDummy = cart.find((i) => i.itemCodeSnap === 'DUMMY');
+    if (existingDummy) {
+      toast.info('Previous Summary Sales is already in your cart.');
+      return;
+    }
+    addToCart(dummyProd, 1);
+    toast.success('Previous Summary Sales added! You can now type the description and net amount in cart.');
+  };
+
   const filteredProducts = (!searchQuery && !selectedCategory) ? [] : products.filter((p) => {
+    if (p.itemCode === 'DUMMY') return false;
     const matchesCategory = !selectedCategory || p.categoryId === selectedCategory;
     const matchesSearch =
       !searchQuery ||
@@ -194,8 +221,10 @@ export default function PosPage() {
     setIsSubmitting(true);
 
     try {
+      const isDummyInvoice = cart.some((item) => item.itemCodeSnap === 'DUMMY');
       const payload = {
         type: invoiceType,
+        isDummy: isDummyInvoice,
         customerId: customer?.id || null,
         customerNameSnap: customer?.nameEn || 'Cash Customer',
         customerPhoneSnap: customer?.phone || null,
@@ -389,6 +418,36 @@ export default function PosPage() {
 
           {/* Products Cards Grid (Scrollable) */}
           <div className="flex-1 overflow-y-auto grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 pr-1">
+            {/* Special Dummy Widget - Appears ONLY when 'dummy' is searched */}
+            {isDummySearch && (
+              <div
+                onClick={handleSelectDummyProduct}
+                className="col-span-full p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/20 border-2 border-amber-500 hover:border-amber-400 cursor-pointer transition-all shadow-xl hover:scale-[1.01] flex items-center justify-between gap-4 group"
+              >
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black shadow-md shadow-amber-500/30">
+                    <Sparkles className="w-6 h-6 animate-pulse" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-extrabold text-sm text-amber-300 group-hover:text-amber-200">
+                        Previous Summary Sales (Dummy)
+                      </h4>
+                      <Badge className="bg-amber-500 text-slate-950 font-black text-[9px] uppercase px-1.5 py-0">
+                        Dummy Sale
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Click to add custom previous summary sale item to cart. You can type custom description and net amount.
+                    </p>
+                  </div>
+                </div>
+                <Button type="button" size="sm" className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs gap-1.5 shrink-0 shadow-md">
+                  <Plus className="w-4 h-4" /> Add Dummy Sale
+                </Button>
+              </div>
+            )}
+
             {filteredProducts.map((product) => (
               <Card
                 key={product.id}
@@ -438,7 +497,64 @@ export default function PosPage() {
                 <p className="text-xs font-medium">Scan barcode or click products from left to add to bill</p>
               </div>
             ) : (
-              cart.map((item) => (
+              cart.map((item) => {
+                if (item.itemCodeSnap === 'DUMMY') {
+                  return (
+                    <div
+                      key={item.productId}
+                      className="p-3 rounded-xl bg-gradient-to-r from-amber-950/40 to-slate-950 border border-amber-500/60 space-y-2.5 shadow-sm"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-black text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/40">
+                            DUMMY SALE
+                          </span>
+                          <span className="text-[11px] font-bold text-slate-300">Previous Summary Sales</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeFromCart(item.productId)}
+                          className="text-slate-400 hover:text-red-400 p-1"
+                          title="Remove Dummy Item"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      {/* Editable Description */}
+                      <div className="space-y-1">
+                        <label className="text-[10px] text-slate-400 font-medium">Description / Details:</label>
+                        <input
+                          type="text"
+                          value={item.nameEnSnap}
+                          onChange={(e) => updateItemDescription(item.productId, e.target.value)}
+                          placeholder="Type summary sale description..."
+                          className="w-full h-8 px-2.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-semibold text-white focus:border-amber-500 outline-none"
+                        />
+                      </div>
+
+                      {/* Editable Net Amount */}
+                      <div className="flex items-center justify-between gap-3 pt-1 border-t border-slate-800">
+                        <span className="text-xs font-bold text-amber-300">Net Amount (KD):</span>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="number"
+                            step="0.001"
+                            min="0"
+                            value={item.price === 0 ? '' : item.price}
+                            onChange={(e) => updatePrice(item.productId, parseFloat(e.target.value) || 0)}
+                            placeholder="0.000"
+                            autoFocus
+                            className="w-28 h-8 px-2 rounded-lg bg-slate-900 border border-amber-500/80 font-mono font-black text-sm text-emerald-400 text-right focus:ring-1 focus:ring-amber-500 outline-none"
+                          />
+                          <span className="font-mono text-xs text-slate-400 font-bold">KD</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
                 <div
                   key={item.productId}
                   className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-2"
@@ -538,7 +654,8 @@ export default function PosPage() {
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
-              ))
+                );
+            })
             )}
           </div>
 

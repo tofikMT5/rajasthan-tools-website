@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Users, ArrowLeft, Phone, MapPin, Receipt, Wallet, MessageSquare, Plus, Calendar } from 'lucide-react';
+import { Users, ArrowLeft, Phone, MapPin, Receipt, Wallet, MessageSquare, Plus, Calendar, FileText, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatKWD, formatDate } from '@/lib/utils';
+import { CustomerStatementModal } from '@/components/customer/CustomerStatementModal';
 import { toast } from 'sonner';
 
 export default function CustomerDetailPage() {
@@ -16,6 +17,7 @@ export default function CustomerDetailPage() {
 
   const [customer, setCustomer] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isStatementOpen, setIsStatementOpen] = useState(false);
 
   useEffect(() => {
     async function fetchCustomer() {
@@ -60,7 +62,14 @@ export default function CustomerDetailPage() {
         <Button variant="ghost" onClick={() => router.push('/customers')} className="gap-2 text-slate-600">
           <ArrowLeft className="w-4 h-4" /> Back to Customers
         </Button>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => setIsStatementOpen(true)}
+            variant="outline"
+            className="gap-2 text-blue-600 border-blue-200 hover:bg-blue-50 dark:hover:bg-blue-950/40 font-bold"
+          >
+            <FileText className="w-4 h-4" /> Account Statement
+          </Button>
           <Button onClick={openWhatsApp} variant="outline" className="gap-2 text-emerald-600 border-emerald-200 hover:bg-emerald-50">
             <MessageSquare className="w-4 h-4" /> WhatsApp
           </Button>
@@ -132,9 +141,19 @@ export default function CustomerDetailPage() {
       {/* Invoices History Table */}
       <Card className="border-slate-200 dark:border-slate-800">
         <CardHeader>
-          <CardTitle className="text-base font-bold flex items-center gap-2">
-            <Receipt className="w-4 h-4 text-blue-600" /> Purchase History & Invoices
-          </CardTitle>
+          <div className="flex items-center justify-between w-full">
+            <CardTitle className="text-base font-bold flex items-center gap-2">
+              <Receipt className="w-4 h-4 text-blue-600" /> Purchase History & Invoices
+            </CardTitle>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setIsStatementOpen(true)}
+              className="text-xs font-bold gap-1.5 text-blue-600 border-blue-200 hover:bg-blue-50"
+            >
+              <Printer className="w-3.5 h-3.5" /> Print Statement (PDF)
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
@@ -173,6 +192,13 @@ export default function CustomerDetailPage() {
           </div>
         </CardContent>
       </Card>
+    
+      {/* Customer Account Statement Modal */}
+      <CustomerStatementModal
+        isOpen={isStatementOpen}
+        onClose={() => setIsStatementOpen(false)}
+        customerId={customerId}
+      />
     </div>
   );
 }

@@ -81,7 +81,19 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   try {
     const { id } = await params;
     const body = await req.json();
-    const { supplierId, date, notes, items, total } = body;
+    const { 
+      supplierId, 
+      date, 
+      notes, 
+      items, 
+      total,
+      subtotal,
+      discount,
+      paidAmount,
+      dueAmount,
+      paymentMethod,
+      status 
+    } = body;
 
     const existingPurchase = await db.purchase.findUnique({ where: { id } });
     if (!existingPurchase) {
@@ -89,6 +101,11 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     const oldItems = (existingPurchase.items as any[]) || [];
+    const numTotal = Number(total);
+    const numSubtotal = subtotal !== undefined ? Number(subtotal) : (existingPurchase.subtotal ? Number(existingPurchase.subtotal) : numTotal);
+    const numDiscount = discount !== undefined ? Number(discount) : (existingPurchase.discount ? Number(existingPurchase.discount) : 0);
+    const numPaid = paidAmount !== undefined ? Number(paidAmount) : (existingPurchase.paidAmount ? Number(existingPurchase.paidAmount) : numTotal);
+    const numDue = dueAmount !== undefined ? Number(dueAmount) : (existingPurchase.dueAmount ? Number(existingPurchase.dueAmount) : 0);
 
     await db.$transaction(async (tx) => {
       // 1. Revert old stock
@@ -127,8 +144,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         data: {
           supplierId,
           date: date ? new Date(date) : existingPurchase.date,
-          total: Number(total),
-          notes: notes || null,
+          subtotal: numSubtotal,
+          discount: numDiscount,
+          total: numTotal,
+          paidAmount: numPaid,
+          dueAmount: numDue,
+          paymentMethod: paymentMethod || existingPurchase.paymentMethod || 'Cash',
+          status: status || existingPurchase.status || 'PAID',
+          notes: notes !== undefined ? notes : existingPurchase.notes,
           items: items,
         }
       });
@@ -185,9 +208,23 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const body = await req.json();
     const { status } = body;
 
+    const existing = await db.purchase.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: 'Purchase not found' }, { status: 404 });
+    }
+
+    const updateData: any = { status };
+    if (status === 'PAID') {
+      updateData.paidAmount = existing.total;
+      updateData.dueAmount = 0;
+    } else if (status === 'UNPAID') {
+      updateData.paidAmount = 0;
+      updateData.dueAmount = existing.total;
+    }
+
     const purchase = await db.purchase.update({
       where: { id },
-      data: { status },
+      data: updateData,
       include: {
         supplier: true,
       },

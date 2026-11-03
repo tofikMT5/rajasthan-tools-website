@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Users, Plus, Search, Phone, Building, MapPin, Eye, Edit, Wallet } from 'lucide-react';
+import { Users, Plus, Search, Phone, Building, MapPin, Eye, Edit, Wallet, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { KUWAIT_AREAS, CUSTOMER_TYPES } from '@/lib/constants';
 import { formatKWD } from '@/lib/utils';
+import { CustomerStatementModal } from '@/components/customer/CustomerStatementModal';
 import { toast } from 'sonner';
 
 export default function CustomersPage() {
@@ -17,6 +18,8 @@ export default function CustomersPage() {
   const [search, setSearch] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isStatementOpen, setIsStatementOpen] = useState(false);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | undefined>(undefined);
   const [isTranslating, setIsTranslating] = useState(false);
 
   // Form state
@@ -203,11 +206,24 @@ export default function CustomersPage() {
                       {formatKWD(c.currentBalance)}
                     </td>
                     <td className="p-3.5 pr-6 text-right">
-                      <Link href={`/customers/${c.id}`}>
-                        <Button size="sm" variant="ghost" className="h-7 text-xs">
-                          <Eye className="w-3.5 h-3.5 mr-1" /> View Profile
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setSelectedCustomerId(c.id);
+                            setIsStatementOpen(true);
+                          }}
+                          className="h-7 text-xs text-blue-600 border-blue-200 hover:bg-blue-50 dark:hover:bg-blue-950/40 font-bold gap-1"
+                        >
+                          <FileText className="w-3.5 h-3.5" /> Statement
                         </Button>
-                      </Link>
+                        <Link href={`/customers/${c.id}`}>
+                          <Button size="sm" variant="ghost" className="h-7 text-xs">
+                            <Eye className="w-3.5 h-3.5 mr-1" /> View Profile
+                          </Button>
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -302,6 +318,13 @@ export default function CustomersPage() {
           </div>
         </div>
       )}
+    
+      {/* Customer Account Statement Modal */}
+      <CustomerStatementModal
+        isOpen={isStatementOpen}
+        onClose={() => setIsStatementOpen(false)}
+        customerId={selectedCustomerId}
+      />
     </div>
   );
 }

@@ -38,13 +38,31 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { supplierId, purchaseNo, date, notes, status, items, total } = body;
+    const { 
+      supplierId, 
+      purchaseNo, 
+      date, 
+      notes, 
+      status, 
+      items, 
+      total,
+      subtotal,
+      discount,
+      paidAmount,
+      dueAmount,
+      paymentMethod 
+    } = body;
 
     if (!supplierId || !items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: 'Supplier and at least 1 item are required' }, { status: 400 });
     }
 
     const generatedNo = purchaseNo || `PUR-${Date.now()}`;
+    const numTotal = Number(total);
+    const numSubtotal = subtotal !== undefined ? Number(subtotal) : numTotal;
+    const numDiscount = discount !== undefined ? Number(discount) : 0;
+    const numPaid = paidAmount !== undefined ? Number(paidAmount) : (status === 'PAID' ? numTotal : 0);
+    const numDue = dueAmount !== undefined ? Number(dueAmount) : (status === 'PAID' ? 0 : numTotal);
 
     // 1. Create Purchase record first
     const purchase = await db.purchase.create({
@@ -52,7 +70,12 @@ export async function POST(req: Request) {
         purchaseNo: generatedNo,
         supplierId,
         date: date ? new Date(date) : new Date(),
-        total: Number(total),
+        subtotal: numSubtotal,
+        discount: numDiscount,
+        total: numTotal,
+        paidAmount: numPaid,
+        dueAmount: numDue,
+        paymentMethod: paymentMethod || 'Cash',
         notes: notes || null,
         status: status || 'PAID',
         items: items,

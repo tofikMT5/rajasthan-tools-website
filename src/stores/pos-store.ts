@@ -52,6 +52,7 @@ interface PosState {
   updateQty: (productId: string, delta: number) => void;
   setQty: (productId: string, qty: number) => void;
   updatePrice: (productId: string, price: number) => void;
+  updateItemDescription: (productId: string, nameEnSnap: string, nameArSnap?: string) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
   setCustomer: (customer: CustomerSnap | null) => void;
@@ -166,6 +167,21 @@ export const usePosStore = create<PosState>((set, get) => ({
           ...item,
           price,
           amount: Number((price * item.qty - item.lineDiscount).toFixed(3)),
+        };
+      }
+      return item;
+    });
+    set({ cart: updated });
+  },
+
+  updateItemDescription: (productId, nameEnSnap, nameArSnap) => {
+    const { cart } = get();
+    const updated = cart.map((item) => {
+      if (item.productId === productId) {
+        return {
+          ...item,
+          nameEnSnap,
+          nameArSnap: nameArSnap !== undefined ? nameArSnap : item.nameArSnap,
         };
       }
       return item;

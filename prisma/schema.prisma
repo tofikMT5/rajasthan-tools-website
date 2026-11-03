@@ -166,6 +166,7 @@ model Invoice {
   checkedBy         String?
   createdBy         String
   isDeleted         Boolean       @default(false)
+  isDummy           Boolean       @default(false)
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
   items             InvoiceItem[]
@@ -174,6 +175,7 @@ model Invoice {
   @@index([invoiceNo])
   @@index([customerId])
   @@index([dateTime])
+  @@index([isDummy])
 }
 
 model InvoiceItem {
@@ -202,16 +204,21 @@ model Payment {
 }
 
 model Purchase {
-  id         String   @id @default(cuid())
-  purchaseNo String   @unique
-  supplierId String
-  supplier   Supplier @relation(fields: [supplierId], references: [id])
-  date       DateTime @default(now())
-  total      Decimal  @db.Decimal(12, 3)
-  notes      String?
-  status     String   @default("PAID")
-  createdAt  DateTime @default(now())
-  items      Json
+  id            String   @id @default(cuid())
+  purchaseNo    String   @unique
+  supplierId    String
+  supplier      Supplier @relation(fields: [supplierId], references: [id])
+  date          DateTime @default(now())
+  subtotal      Decimal? @default(0) @db.Decimal(12, 3)
+  discount      Decimal? @default(0) @db.Decimal(12, 3)
+  total         Decimal  @db.Decimal(12, 3)
+  paidAmount    Decimal? @default(0) @db.Decimal(12, 3)
+  dueAmount     Decimal? @default(0) @db.Decimal(12, 3)
+  paymentMethod String?  @default("Cash")
+  notes         String?
+  status        String   @default("PAID")
+  createdAt     DateTime @default(now())
+  items         Json
 }
 
 model StockMovement {

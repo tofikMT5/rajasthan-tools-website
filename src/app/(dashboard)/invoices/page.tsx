@@ -16,7 +16,7 @@ export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [localSearch, setLocalSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PAID' | 'UNPAID'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PAID' | 'UNPAID' | 'DUMMY'>('ALL');
   const { globalSearch } = useSearchStore();
   const search = localSearch || globalSearch;
   
@@ -167,7 +167,14 @@ export default function InvoicesPage() {
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
                 {invoices.map((inv) => (
                   <tr key={inv.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                    <td className="p-3.5 pl-6 font-mono font-bold text-blue-600">RT-{inv.invoiceNo}</td>
+                    <td className="p-3.5 pl-6 font-mono font-bold text-blue-600">
+                      RT-{inv.invoiceNo}
+                      {inv.isDummy && (
+                        <Badge variant="warning" className="ml-1.5 text-[9px] font-bold bg-amber-500/20 text-amber-500 border border-amber-500/30">
+                          DUMMY
+                        </Badge>
+                      )}
+                    </td>
                     <td className="p-3.5 text-slate-500 font-mono">{formatDate(inv.dateTime)}</td>
                     <td className="p-3.5 font-bold text-slate-900 dark:text-white">{inv.customerNameSnap}</td>
                     <td className="p-3.5">

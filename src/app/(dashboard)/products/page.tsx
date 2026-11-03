@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Package, Plus, Search, Filter, LayoutGrid, List, Barcode, AlertTriangle, Edit, Eye, Sparkles } from 'lucide-react';
+import { Package, Plus, Search, Filter, LayoutGrid, List, Barcode, AlertTriangle, Edit, Eye, Sparkles, TrendingDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { formatKWD } from '@/lib/utils';
 import { FeatureLockOverlay } from '@/components/shared/FeatureLockOverlay';
 import Link from 'next/link';
+import { SupplierPriceCompareModal } from '@/components/shared/SupplierPriceCompareModal';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -19,6 +20,8 @@ export default function ProductsPage() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [toggles, setToggles] = useState<any>(null);
+  const [showPriceCompareModal, setShowPriceCompareModal] = useState(false);
+  const [compareProductId, setCompareProductId] = useState<string | undefined>(undefined);
 
   // Add Product Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -192,6 +195,17 @@ export default function ProductsPage() {
             <p className="text-sm text-slate-500">Manage pricing, KWD decimals, stock levels and barcodes.</p>
           </div>
           <div className="flex items-center gap-3">
+          <Button
+            type="button"
+            onClick={() => {
+              setCompareProductId(undefined);
+              setShowPriceCompareModal(true);
+            }}
+            variant="outline"
+            className="border-emerald-500/60 bg-emerald-50/50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-900/50 font-bold gap-2 text-xs shadow-sm h-10 px-4 rounded-xl"
+          >
+            <TrendingDown className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Compare Supplier Prices
+          </Button>
           <Button onClick={() => setIsModalOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold gap-2">
             <Plus className="w-4 h-4" /> Add Product
           </Button>
@@ -269,11 +283,26 @@ export default function ProductsPage() {
                     <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Sale Price</span>
                     <span className="text-base font-extrabold text-blue-600 font-mono">{formatKWD(p.salePrice)}</span>
                   </div>
-                  <Link href={`/products/${p.id}`}>
-                    <Button size="sm" variant="ghost" className="h-8 text-xs text-slate-500 hover:text-blue-600 gap-1">
-                      <Eye className="w-3.5 h-3.5" /> View
+                  <div className="flex items-center gap-1">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        setCompareProductId(p.id);
+                        setShowPriceCompareModal(true);
+                      }}
+                      className="h-8 text-xs text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 gap-1 px-2"
+                      title="Compare Supplier Prices & History"
+                    >
+                      <TrendingDown className="w-3.5 h-3.5" /> Rates
                     </Button>
-                  </Link>
+                    <Link href={`/products/${p.id}`}>
+                      <Button size="sm" variant="ghost" className="h-8 text-xs text-slate-500 hover:text-blue-600 gap-1">
+                        <Eye className="w-3.5 h-3.5" /> View
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -311,11 +340,26 @@ export default function ProductsPage() {
                       <td className="p-3.5 font-mono font-bold text-emerald-600">{formatKWD(p.salePrice)}</td>
                       <td className="p-3.5 font-mono font-bold">{p.stockQty} {p.unit}</td>
                       <td className="p-3.5 pr-6 text-right">
-                        <Link href={`/products/${p.id}`}>
-                          <Button size="sm" variant="ghost" className="h-7 text-xs">
-                            Details
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setCompareProductId(p.id);
+                              setShowPriceCompareModal(true);
+                            }}
+                            className="h-7 text-xs text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 gap-1 px-2"
+                            title="Compare Supplier Prices & History"
+                          >
+                            <TrendingDown className="w-3 h-3" /> Rates
                           </Button>
-                        </Link>
+                          <Link href={`/products/${p.id}`}>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs">
+                              Details
+                            </Button>
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -484,6 +528,13 @@ export default function ProductsPage() {
           </div>
         </div>
       )}
+
+      {/* Supplier Price Comparison Modal */}
+      <SupplierPriceCompareModal
+        isOpen={showPriceCompareModal}
+        onClose={() => setShowPriceCompareModal(false)}
+        initialProductId={compareProductId}
+      />
       </div>
     </FeatureLockOverlay>
   );

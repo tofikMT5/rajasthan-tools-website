@@ -108,6 +108,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const { id } = await params;
     const body = await req.json();
     const {
+      invoiceNo,
+      isDummy,
       customerId,
       customerNameSnap,
       customerPhoneSnap,
@@ -138,6 +140,22 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
     }
 
+    const targetInvoiceNo = invoiceNo !== undefined && invoiceNo !== null ? parseInt(String(invoiceNo)) : existing.invoiceNo;
+    if (!isNaN(targetInvoiceNo) && targetInvoiceNo !== existing.invoiceNo) {
+      const duplicate = await db.invoice.findFirst({
+        where: {
+          invoiceNo: targetInvoiceNo,
+          id: { not: id },
+        },
+      });
+      if (duplicate) {
+        return NextResponse.json(
+          { error: `Invoice number #RT-${targetInvoiceNo} already exists! Please choose a different number.` },
+          { status: 400 }
+        );
+      }
+    }
+
     const numGross = Number(grossAmount);
     const numDiscount = Number(discountAmount);
     const numExtra = Number(extraAmount);
@@ -151,32 +169,36 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const computedStatus = status || (numDue <= 0 ? 'PAID' : numPaid > 0 ? 'PARTIAL' : 'UNPAID');
 
     const updatedInvoice = await db.$transaction(async (tx) => {
-      // 1. Revert previous stock movements (increment stock by previous item qty)
+      // 1. Revert previous stock movements (skip dummy items)
       for (const oldItem of existing.items) {
-        await tx.product.update({
-          where: { id: oldItem.productId },
-          data: { stockQty: { increment: oldItem.qty } },
-        });
+        if (oldItem.itemCodeSnap !== 'DUMMY') {
+          await tx.product.update({
+            where: { id: oldItem.productId },
+            data: { stockQty: { increment: oldItem.qty } },
+          });
+        }
       }
 
-      // 2. Deduct new items stock (decrement stock by new item qty)
+      // 2. Deduct new items stock (skip dummy items)
       for (const newItem of items) {
-        await tx.product.update({
-          where: { id: newItem.productId },
-          data: { stockQty: { decrement: Number(newItem.qty) } },
-        });
+        if (newItem.itemCodeSnap !== 'DUMMY') {
+          await tx.product.update({
+            where: { id: newItem.productId },
+            data: { stockQty: { decrement: Number(newItem.qty) } },
+          });
 
-        await tx.stockMovement.create({
-          data: {
-            productId: newItem.productId,
-            type: 'OUT',
-            qty: Number(newItem.qty),
-            refType: 'INVOICE_EDIT',
-            refId: existing.id,
-            note: `Stock adjusted from edited Invoice #RT-${existing.invoiceNo}`,
-            createdBy: 'admin',
-          },
-        });
+          await tx.stockMovement.create({
+            data: {
+              productId: newItem.productId,
+              type: 'OUT',
+              qty: Number(newItem.qty),
+              refType: 'INVOICE_EDIT',
+              refId: existing.id,
+              note: `Stock adjusted from edited Invoice #RT-${targetInvoiceNo || existing.invoiceNo}`,
+              createdBy: 'admin',
+            },
+          });
+        }
       }
 
       // 3. Customer balance adjustments
@@ -204,6 +226,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       const inv = await tx.invoice.update({
         where: { id },
         data: {
+          invoiceNo: !isNaN(targetInvoiceNo) && targetInvoiceNo > 0 ? targetInvoiceNo : existing.invoiceNo,
+          isDummy: isDummy !== undefined ? Boolean(isDummy) : existing.isDummy,
           customerId: customerId || null,
           customerNameSnap: customerNameSnap || 'Cash Customer',
           customerPhoneSnap: customerPhoneSnap || null,

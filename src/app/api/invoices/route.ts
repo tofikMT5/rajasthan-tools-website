@@ -18,7 +18,9 @@ export async function GET(req: Request) {
       ];
     }
     if (status && status !== 'ALL') {
-      if (status.toUpperCase() === 'UNPAID') {
+      if (status.toUpperCase() === 'DUMMY') {
+        where.isDummy = true;
+      } else if (status.toUpperCase() === 'UNPAID') {
         where.status = { in: ['UNPAID', 'PARTIAL'] };
       } else {
         where.status = status.toUpperCase();
@@ -80,10 +82,13 @@ export async function POST(req: Request) {
       const amountInWordsEn = kwdToWordsEn(validated.netAmount);
       const amountInWordsAr = kwdToWordsAr(validated.netAmount);
 
+      const isDummy = Boolean(validated.isDummy || body.isDummy);
+
       // 2. Create Invoice Record
       const invoice = await tx.invoice.create({
         data: {
           invoiceNo: nextInvoiceNo,
+          isDummy,
           type: validated.type,
           customerId: validated.customerId || null,
           customerNameSnap: validated.customerNameSnap,
@@ -143,8 +148,10 @@ export async function POST(req: Request) {
       timeout: 30000,
     });
 
-    // 4. Batch Product Stock Decrements and Stock Movements
-    const productDecrementPromises = validated.items.map((item) =>
+    // 4. Batch Product Stock Decrements and Stock Movements (skip dummy summary sale items)
+    const nonDummyItems = validated.items.filter((item) => item.itemCodeSnap !== 'DUMMY');
+
+    const productDecrementPromises = nonDummyItems.map((item) =>
       db.product.update({
         where: { id: item.productId },
         data: {
@@ -153,7 +160,7 @@ export async function POST(req: Request) {
       })
     );
 
-    const stockMovementPromises = validated.items.map((item) =>
+    const stockMovementPromises = nonDummyItems.map((item) =>
       db.stockMovement.create({
         data: {
           productId: item.productId,
@@ -167,10 +174,12 @@ export async function POST(req: Request) {
       })
     );
 
-    await db.$transaction([
-      ...productDecrementPromises,
-      ...stockMovementPromises,
-    ]);
+    if (productDecrementPromises.length > 0) {
+      await db.$transaction([
+        ...productDecrementPromises,
+        ...stockMovementPromises,
+      ]);
+    }
 
     return NextResponse.json(result, { status: 201 });
   } catch (error: any) {

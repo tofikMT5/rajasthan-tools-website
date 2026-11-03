@@ -99,4 +99,5 @@ export const invoiceCreateSchema = z.object({
   paidAmount: z.number().min(0),
   dueAmount: z.number().min(0),
   status: z.enum(['PAID', 'UNPAID', 'PARTIAL']).optional(),
+  isDummy: z.boolean().optional().default(false),
 });

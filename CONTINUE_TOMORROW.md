@@ -24,8 +24,12 @@
 24. ✅ **Petty Cash Management Module Added:** Added `/petty-cash` module with sidebar item below Settings, sequential voucher generation, running cash balance, receipt/payment entries, print format, and Excel export.
 25. ✅ **Edit Sales Invoice Feature Added:** Added `Edit Invoice` button on `/invoices/[id]` and table, `/invoices/[id]/edit` full editor, and backend stock-safe `PUT /api/invoices/[id]` route.
 26. ✅ **Paid & Unpaid Status Filters Added:** Added dynamic toggle pills `[ All | Paid | Unpaid ]` to both Purchases (`/purchases`) and Invoices (`/invoices`) with server-side query filtering.
-27. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
-28. **Client Request Backlog:** Proceed with remaining changes requested by the client.
+27. ✅ **Purchase Discount, Payment Modes (Cash/K-Net/Partial), & Printable Invoice Added:** Integrated Bill Discount (KD), Paid / Partially / Unpaid status toggles, payment methods (Cash, K-Net, Card, Cheque), dynamic typed paid amount on Partial with remaining balance calculation, backend columns & transactions, and A4 print / PDF download layout matching client requirements.
+28. ✅ **POS Dummy Summary Sales & Editable Invoice Number Added:** In POS (`/pos`), typing "dummy" triggers special 'Previous Summary Sales (Dummy)' card with customizable description and manual Net Amount input (real inventory untouched). Added `[ Dummy ]` filter in `/invoices`. In `/invoices/[id]/edit`, made Invoice Number `#RT-{invoiceNo}` editable with duplicate conflict error detection.
+29. ✅ **Supplier Price Comparison & Purchase History by Product Added:** Added dedicated API and modal to search any product and see all suppliers who supplied it, their prices, who gave the lowest price (🏆 Best Rate), latest purchase date/price, and chronological order timeline. Integrated into `/purchases`, `/purchases/new`, `/purchases/[id]/edit`, and `/products`.
+30. ✅ **Customer Account Statement & Date-Range PDF Export Added:** Added dedicated `Statement` button on `/customers` table row (matching screenshot) and `/customers/[id]`. Added date-range filtering (Presets: Last 2 Months, This Month, Last Month, Last 30 Days, All Time, Custom), total invoices count, total paid, remaining due balance, payment breakdown (Cash, K-Net, Card, etc.), chronological transactions ledger, and high-quality A4 printable/PDF export component.
+31. **Send the latest `RT-Billing-Setup-1.0.0.exe` (from `dist-final2/`) to the client and ensure they can install/open it.**
+32. **Client Request Backlog:** Proceed with remaining changes requested by the client.
 
 ## Do NOT do tomorrow unless asked
 - Full rewrite

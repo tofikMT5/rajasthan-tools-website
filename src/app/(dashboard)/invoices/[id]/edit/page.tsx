@@ -227,6 +227,7 @@ export default function EditInvoicePage() {
       setIsSubmitting(true);
 
       const payload = {
+        invoiceNo: invoiceNo ? Number(invoiceNo) : undefined,
         customerId: customerId || null,
         customerNameSnap: customerName.trim(),
         customerPhoneSnap: customerPhone.trim() || null,
@@ -309,7 +310,17 @@ export default function EditInvoicePage() {
             <div className="w-9 h-9 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center">
               <FileText className="w-5 h-5" />
             </div>
-            <span>Edit Sales Invoice #RT-{invoiceNo}</span>
+            <span>Edit Sales Invoice</span>
+            <div className="flex items-center gap-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 shadow-sm">
+              <span className="font-mono font-bold text-orange-600 text-sm">#RT-</span>
+              <input
+                type="number"
+                value={invoiceNo ?? ''}
+                onChange={(e) => setInvoiceNo(e.target.value ? parseInt(e.target.value) : null)}
+                className="w-24 font-mono font-black text-base bg-transparent border-none outline-none text-slate-900 dark:text-white focus:ring-0"
+                title="Edit Invoice Number"
+              />
+            </div>
             <Badge variant={status === 'PAID' ? 'success' : 'warning'}>{status}</Badge>
           </h1>
           <p className="text-xs text-slate-500 mt-1">
