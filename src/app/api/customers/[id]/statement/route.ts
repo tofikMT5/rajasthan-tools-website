@@ -62,6 +62,8 @@ export async function GET(
     let totalNet = 0;
     let totalPaid = 0;
     let totalDue = 0;
+    let paidInvoicesCount = 0;
+    let unpaidInvoicesCount = 0;
 
     const paymentModes: Record<string, number> = {
       Cash: 0,
@@ -76,18 +78,38 @@ export async function GET(
       const gross = Number(inv.grossAmount || 0);
       const discount = Number(inv.discountAmount || 0);
       const net = Number(inv.netAmount || 0);
-      const paid = Number(
-        inv.paidAmount !== undefined && inv.paidAmount !== null
-          ? inv.paidAmount
-          : inv.status === 'PAID'
-          ? net
-          : 0
-      );
-      const due = Number(
-        inv.dueAmount !== undefined && inv.dueAmount !== null
-          ? inv.dueAmount
-          : Math.max(0, net - paid)
-      );
+      const normStatus = (inv.status || 'PAID').toUpperCase();
+
+      let paid = 0;
+      let due = 0;
+
+      if (normStatus === 'PAID') {
+        // Fully paid
+        paid = net;
+        due = 0;
+      } else if (normStatus === 'UNPAID') {
+        // Zero paid, full amount due
+        paid = 0;
+        due = net;
+      } else if (normStatus === 'PARTIAL') {
+        const storedPaid = Number(inv.paidAmount || 0);
+        const paymentsSum = (inv.payments || []).reduce((acc: number, p: any) => acc + Number(p.amount || 0), 0);
+        paid = storedPaid > 0 ? storedPaid : paymentsSum > 0 ? paymentsSum : 0;
+        due = Math.max(0, Number((net - paid).toFixed(3)));
+      } else {
+        // Fallback
+        const paymentsSum = (inv.payments || []).reduce((acc: number, p: any) => acc + Number(p.amount || 0), 0);
+        if (paymentsSum >= net) {
+          paid = net;
+          due = 0;
+        } else if (paymentsSum > 0) {
+          paid = paymentsSum;
+          due = Math.max(0, Number((net - paid).toFixed(3)));
+        } else {
+          paid = net;
+          due = 0;
+        }
+      }
 
       totalGross += gross;
       totalDiscount += discount;
@@ -95,14 +117,22 @@ export async function GET(
       totalPaid += paid;
       totalDue += due;
 
+      if (due <= 0) {
+        paidInvoicesCount += 1;
+      } else {
+        unpaidInvoicesCount += 1;
+      }
+
       // Determine payment methods from payments array
       const paymentList = inv.payments || [];
       const modesFound: string[] = [];
 
       if (paymentList.length > 0) {
+        let allocated = 0;
         for (const p of paymentList) {
           const modeUpper = (p.mode || '').toUpperCase();
           const pAmt = Number(p.amount || 0);
+          allocated += pAmt;
           if (modeUpper.includes('KNET') || modeUpper.includes('K-NET')) {
             paymentModes['K-Net'] += pAmt;
             if (!modesFound.includes('K-Net')) modesFound.push('K-Net');
@@ -123,28 +153,34 @@ export async function GET(
             if (!modesFound.includes(p.mode)) modesFound.push(p.mode);
           }
         }
-      } else {
-        // Fallback based on invoice status / type
-        if (inv.status === 'PAID' || paid > 0) {
-          const typeUpper = (inv.type || 'CASH').toUpperCase();
-          if (typeUpper.includes('KNET')) {
-            paymentModes['K-Net'] += paid;
-            modesFound.push('K-Net');
-          } else {
-            paymentModes['Cash'] += paid;
-            modesFound.push('Cash');
-          }
+        if (paid > allocated) {
+          const remainder = paid - allocated;
+          paymentModes['Cash'] += remainder;
+          if (!modesFound.includes('Cash')) modesFound.push('Cash');
+        }
+      } else if (paid > 0) {
+        // Fallback based on invoice type
+        const typeUpper = (inv.type || 'CASH').toUpperCase();
+        if (typeUpper.includes('KNET') || typeUpper.includes('K-NET')) {
+          paymentModes['K-Net'] += paid;
+          modesFound.push('K-Net');
+        } else if (typeUpper.includes('VISA') || typeUpper.includes('CARD')) {
+          paymentModes['Visa / Card'] += paid;
+          modesFound.push('Visa / Card');
+        } else {
+          paymentModes['Cash'] += paid;
+          modesFound.push('Cash');
         }
       }
 
-      const methodLabel = modesFound.length > 0 ? modesFound.join(', ') : inv.status === 'UNPAID' ? 'Credit / Unpaid' : 'Cash';
+      const methodLabel = modesFound.length > 0 ? modesFound.join(', ') : normStatus === 'UNPAID' ? 'Credit / Unpaid' : 'Cash';
 
       return {
         id: inv.id,
         invoiceNo: inv.invoiceNo,
         dateTime: inv.dateTime,
         type: inv.type,
-        status: inv.status,
+        status: normStatus,
         paymentMethod: methodLabel,
         grossAmount: gross,
         discountAmount: discount,
@@ -177,6 +213,8 @@ export async function GET(
       },
       summary: {
         invoicesCount: formattedInvoices.length,
+        paidInvoicesCount,
+        unpaidInvoicesCount,
         totalGross: Number(totalGross.toFixed(3)),
         totalDiscount: Number(totalDiscount.toFixed(3)),
         totalNet: Number(totalNet.toFixed(3)),
@@ -199,4 +237,3 @@ export async function GET(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-

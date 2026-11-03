@@ -333,7 +333,9 @@ export function CustomerStatementModal({
                       <span className="text-xl font-black font-mono text-slate-900 dark:text-white mt-1 block">
                         {summary.invoicesCount} Invoices
                       </span>
-                      <span className="text-[10px] text-slate-400 font-arabic block">عدد الفواتير الصادرة</span>
+                      <span className="text-[10px] text-slate-500 font-arabic block font-semibold">
+                        {summary.paidInvoicesCount || 0} مدفوع • {summary.unpaidInvoicesCount || 0} آجل
+                      </span>
                     </div>
 
                     <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
@@ -353,17 +355,17 @@ export function CustomerStatementModal({
                       <span className="text-xl font-black font-mono text-emerald-600 mt-1 block">
                         {formatKWD(summary.totalPaid)}
                       </span>
-                      <span className="text-[10px] text-emerald-600/80 font-arabic block">المبلغ المسدد</span>
+                      <span className="text-[10px] text-emerald-600 font-arabic block font-semibold">إجمالي المبلغ المسدد</span>
                     </div>
 
                     <div className="p-4 rounded-2xl border border-rose-500/30 bg-rose-50/20 dark:bg-rose-950/20">
                       <span className="text-[10px] font-bold uppercase text-rose-700 dark:text-rose-300 block">
-                        Period Remaining Due
+                        Total Unpaid / Due
                       </span>
                       <span className="text-xl font-black font-mono text-rose-600 mt-1 block">
                         {formatKWD(summary.totalDue)}
                       </span>
-                      <span className="text-[10px] text-rose-600/80 font-arabic block">المبلغ المتبقي غير المسدد</span>
+                      <span className="text-[10px] text-rose-600 font-arabic block font-semibold">المبلغ المتبقي غير المسدد</span>
                     </div>
                   </div>
                 )}

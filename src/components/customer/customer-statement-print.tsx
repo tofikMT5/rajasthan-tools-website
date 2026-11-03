@@ -22,6 +22,8 @@ interface CustomerStatementPrintProps {
     };
     summary: {
       invoicesCount: number;
+      paidInvoicesCount?: number;
+      unpaidInvoicesCount?: number;
       totalGross: number;
       totalDiscount: number;
       totalNet: number;
@@ -181,7 +183,9 @@ export function CustomerStatementPrint({ data }: CustomerStatementPrintProps) {
         <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
           <span className="text-[9px] font-bold uppercase text-slate-400 block">Total Invoices</span>
           <span className="text-base font-black font-mono text-slate-900">{summary.invoicesCount} Bills</span>
-          <span className="text-[9px] font-arabic text-slate-400 block">عدد الفواتير الصادرة</span>
+          <span className="text-[9px] font-arabic text-slate-500 block font-semibold">
+            {summary.paidInvoicesCount ?? 0} مدفوع • {summary.unpaidInvoicesCount ?? 0} آجل
+          </span>
         </div>
 
         <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
@@ -193,13 +197,13 @@ export function CustomerStatementPrint({ data }: CustomerStatementPrintProps) {
         <div className="p-2.5 rounded-lg border border-emerald-300 bg-emerald-50/60">
           <span className="text-[9px] font-bold uppercase text-emerald-800 block">Total Amount Paid</span>
           <span className="text-base font-black font-mono text-emerald-700">{formatKWD(summary.totalPaid)}</span>
-          <span className="text-[9px] font-arabic text-emerald-600 block">إجمالي المبلغ المسدد</span>
+          <span className="text-[9px] font-arabic text-emerald-600 block font-semibold">إجمالي المبلغ المسدد</span>
         </div>
 
         <div className="p-2.5 rounded-lg border border-rose-300 bg-rose-50/60">
-          <span className="text-[9px] font-bold uppercase text-rose-800 block">Balance Remaining Due</span>
+          <span className="text-[9px] font-bold uppercase text-rose-800 block">Total Unpaid / Due</span>
           <span className="text-base font-black font-mono text-rose-700">{formatKWD(summary.totalDue)}</span>
-          <span className="text-[9px] font-arabic text-rose-600 block">المبلغ المتبقي غير المسدد</span>
+          <span className="text-[9px] font-arabic text-rose-600 block font-semibold">المبلغ المتبقي غير المسدد</span>
         </div>
       </div>
 

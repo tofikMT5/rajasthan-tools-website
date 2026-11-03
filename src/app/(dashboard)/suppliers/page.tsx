@@ -1,17 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Building2, Plus, Phone, Mail, MapPin } from 'lucide-react';
+import { Building2, Plus, Phone, Mail, MapPin, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { SupplierStatementModal } from '@/components/supplier/SupplierStatementModal';
 
 export default function SuppliersPage() {
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isStatementOpen, setIsStatementOpen] = useState(false);
+  const [selectedSupplierId, setSelectedSupplierId] = useState<string | undefined>(undefined);
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -112,6 +115,23 @@ export default function SuppliersPage() {
                   </p>
                 )}
               </div>
+
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <span className="text-[10px] text-slate-400 font-mono">
+                  {s._count?.purchases || 0} Intake Orders
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setSelectedSupplierId(s.id);
+                    setIsStatementOpen(true);
+                  }}
+                  className="h-7 text-xs text-orange-600 border-orange-200 hover:bg-orange-50 dark:hover:bg-orange-950/40 font-bold gap-1"
+                >
+                  <FileText className="w-3.5 h-3.5" /> Statement
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -151,6 +171,13 @@ export default function SuppliersPage() {
           </div>
         </div>
       )}
+    
+      {/* Supplier Account Statement Modal */}
+      <SupplierStatementModal
+        isOpen={isStatementOpen}
+        onClose={() => setIsStatementOpen(false)}
+        supplierId={selectedSupplierId}
+      />
     </div>
   );
 }
